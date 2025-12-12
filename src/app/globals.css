@@ -5,7 +5,7 @@
   --foreground: #171717;
 }
 
-@theme inline {
+:root {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -22,5 +22,132 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), ui-sans-serif, system, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.015em;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Improve font rendering on mobile */
+@media (max-width: 640px) {
+  body {
+    letter-spacing: -0.01em;
+    word-spacing: 0.02em;
+  }
+}
+
+/* Ensure text-size-adjust is present unprefixed for modern browsers (fixes webhint/webhint compatibility warnings) */
+html,
+:host {
+  text-size-adjust: 100%;
+}
+
+@layer base {
+  /* Base text size adjustment and touch handling */
+  html,
+  :host {
+    text-size-adjust: 100%;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  :host {
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  body {
+    user-select: auto;
+    -moz-user-select: auto;
+    -ms-user-select: auto;
+    min-height: 100svh;
+    overflow-x: hidden;
+  }
+  
+  /* Improved scrolling behavior */
+  @supports (height: 100dvh) {
+    body {
+      min-height: 100dvh;
+    }
+  }
+
+  /* Better tap targets on mobile */
+  @media (max-width: 640px) {
+    button, 
+    [role="button"],
+    a {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
+  /* Visual effects */
+  .backdrop {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  /* Performance optimizations */
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  img, 
+  video,
+  canvas {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* Lightweight icon float animation (prefers-reduced-motion friendly) */
+@keyframes float-y {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+  100% { transform: translateY(0); }
+}
+.icon-float {
+  display: inline-block;
+  will-change: transform;
+  animation: float-y 3s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .icon-float {
+    animation: none;
+  }
+}
+
+/* Hero bouncing arrow */
+@keyframes arrow-bounce {
+  0% { transform: translateY(0); }
+  25% { transform: translateY(-8px); }
+  50% { transform: translateY(0); }
+  75% { transform: translateY(-4px); }
+  100% { transform: translateY(0); }
+}
+.hero-scroll-arrow {
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: transform 200ms ease, background-color 200ms ease;
+  will-change: transform;
+  animation: arrow-bounce 1.8s cubic-bezier(.2,.9,.3,1) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-scroll-arrow {
+    animation: none;
+  }
 }
