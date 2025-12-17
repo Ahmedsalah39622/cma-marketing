@@ -60,7 +60,7 @@ export default function AnimatedStatsSlider() {
     { w: 450, h: 380, l: 45, t: 70, x: 15, y: -25, d: 30 },
   ];
   return (
-    <section id="stats" className="py-20 bg-black text-white relative overflow-hidden">
+    <section id="stats" className="py-20 bg- text-white relative overflow-hidden">
       {/* Animated background */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-secondary/10" />

@@ -1,27 +1,17 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { MobileHeroImage } from '@/components/3d/MobileHeroImage';
-import { useMediaQuery } from '@/lib/hooks/use-media-query';
+import logoImg from '../../../Gemini_Generated_Image_qt0ozxqt0ozxqt0o-removebg-preview.png';
 
-// Dynamically load the heavy 3D scene only on the client to avoid bundling three.js into server code
-const Scene = dynamic(() => import('@/components/3d/TechScene'), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-full flex items-center justify-center">
-      <div className="w-24 h-24 rounded-full bg-white/5" />
-    </div>
-  )
-});
+// Use static logo image instead of 3D scene
 
 export default function HeroSection() {
-  const isDesktop = useMediaQuery('(min-width: 768px)');
 
   return (
-    <section className="relative min-h-[100svh] flex items-center justify-center bg-black pt-16 pb-8 md:py-0">
+    <section className="relative min-h-[100svh] flex items-center justify-center bg- pt-16 pb-8 md:py-0">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="grid md:grid-cols-2 gap-6 md:gap-12 items-center">
           <motion.div
@@ -31,12 +21,12 @@ export default function HeroSection() {
             className="text-center md:text-left space-y-4 md:space-y-6"
           >
             <h1 className="text-4xl md:text-6xl font-bold leading-[1.2] tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
-              Innovate with{' '}
-              <span className="text-primary">Novix</span>
+              Grow Your Brand with{' '}
+              <span className="text-primary">CMA Marketing</span>
             </h1>
             <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto md:mx-0 leading-relaxed">
-              We deliver cutting-edge tech solutions for forward-thinking businesses. From AI integration
-              to cloud infrastructure, we transform your digital aspirations into reality.
+              We craft data-driven marketing strategies that elevate brands, increase engagement, and
+              drive measurable growth across digital channels — from creative campaigns to analytics-led optimization.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
               <Link href="/contact">
@@ -62,28 +52,22 @@ export default function HeroSection() {
               </Link>
             </div>
           </motion.div>
-          {isDesktop ? (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8 }}
+            className="relative aspect-square w-full max-w-lg mx-auto md:max-w-none flex items-center justify-center"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-primary to-secondary opacity-10 rounded-full blur-3xl" />
             <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.7 }}
-              className="relative aspect-square w-full max-w-lg mx-auto md:max-w-none"
+              initial={{ y: 6 }}
+              animate={{ y: [-10, 0, -10] }}
+              transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
+              className="relative w-48 h-48 md:w-80 md:h-80 flex items-center justify-center"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-primary to-secondary opacity-10 rounded-full blur-3xl" />
-              <div className="relative w-full h-full">
-                <Scene />
-              </div>
+              <Image src={logoImg} alt="CMA Marketing logo" width={320} height={320} className="object-contain" priority />
             </motion.div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.7 }}
-              className="relative aspect-square w-full max-w-lg mx-auto"
-            >
-              <MobileHeroImage />
-            </motion.div>
-          )}
+          </motion.div>
         </div>
       </div>
       {/* Bouncing scroll arrow - not a button; scrolls slowly to the next section (id="stats") */}

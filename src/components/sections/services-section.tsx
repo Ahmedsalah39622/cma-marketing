@@ -59,7 +59,7 @@ const services = [
 
 export default function ServicesSection() {
   return (
-    <section className="relative py-24 bg-black">
+    <section className="relative py-24 bg-">
       <CurvedBackground />
       <div className="container mx-auto px-4 relative z-10">
         <motion.div

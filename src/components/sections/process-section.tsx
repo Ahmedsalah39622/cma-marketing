@@ -45,7 +45,7 @@ const processSteps = [
 export default function ProcessSection() {
 
   return (
-    <section className="py-24 bg-black relative overflow-hidden">
+    <section className="py-24 bg- relative overflow-hidden">
       {/* Decorative background line (CSS only for performance) */}
       <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary/50 to-transparent pointer-events-none" />
 

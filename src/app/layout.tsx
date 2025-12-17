@@ -17,17 +17,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Novix - Software Engineering Solutions",
-  description: "Your partner in digital transformation",
+  title: "CMA Marketing | Digital Marketing Agency",
+  description: "CMA Marketing is a digital marketing agency specializing in SEO, social media marketing, paid ads, and brand growth to help businesses scale online.",
   icons: {
-    icon: '/novix-logo-blue.png',
-    apple: '/novix-logo-blue.png',
+    icon: '/Tab_Icon.png',
+    apple: '/Tab_Icon.png',
   },
   metadataBase: new URL('https://novix.com'),
   openGraph: {
-    images: '/novix-logo-blue.png',
-    title: 'Novix - Software Engineering Solutions',
-    description: 'Your partner in digital transformation',
+    images: '/Tab_Icon.png',
+    title: 'CMA - Software Engineering Solutions',
+    description: 'CMA Marketing is a digital marketing agency specializing in SEO, social media marketing, paid ads, and brand growth to help businesses scale online.',
     type: 'website',
   },
 };
@@ -40,8 +40,8 @@ export default function RootLayout({
   return (
     <html lang="en" className="overflow-x-hidden">
       <head>
-        <link rel="icon" href="/novix-logo-blue.png" />
-        <link rel="apple-touch-icon" href="/novix-logo-blue.png" />
+        <link rel="icon" href="/cma-logo.png" />
+        <link rel="apple-touch-icon" href="/cma-logo.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5" />
         <style>{`html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; } :host { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }`}</style>
       </head>
