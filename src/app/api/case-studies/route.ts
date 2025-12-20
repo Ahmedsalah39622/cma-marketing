@@ -1,6 +1,7 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { validateMethod, createApiResponse, handleApiError } from '@/lib/api-utils';
 import type { CaseStudy } from '@/lib/types';
+import { defaultContent } from '@/lib/content';
 
 // This is a mock database for now. In production, you'd use a real database.
 const caseStudies: CaseStudy[] = [
@@ -44,6 +45,8 @@ const caseStudies: CaseStudy[] = [
     testimonial: 'This system has revolutionized how we manage patient data and care delivery.'
   }
 ];
+
+let siteContent = defaultContent;
 
 export async function GET(request: NextRequest) {
   try {
@@ -91,4 +94,14 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     return handleApiError(error);
   }
+}
+
+export async function getSiteContent() {
+  return NextResponse.json(siteContent);
+}
+
+export async function postSiteContent(request: Request) {
+  const data = await request.json();
+  siteContent = data;
+  return NextResponse.json({ success: true });
 }

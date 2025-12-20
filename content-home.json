@@ -1,0 +1,27 @@
+{
+  "hero": {
+    "title": "Marketing",
+    "subtitle": "Welcome",
+    "getStartedLabel": "Get Started"
+  },
+  "about": {
+    "heading": "About Main",
+    "description": "About us content."
+  },
+  "services": {
+    "heading": "Services ",
+    "description": "Services overview."
+  },
+  "solutions": {
+    "heading": "Solutions Main",
+    "description": "Solutions overview."
+  },
+  "technology": {
+    "heading": "Technology Main",
+    "description": "Technology overview."
+  },
+  "contact": {
+    "heading": "Contact Main",
+    "description": "Contact info."
+  }
+}

@@ -108,7 +108,7 @@ export default function AchievementTimeline() {
   const lineHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   return (
-    <section className="py-24 bg-black relative overflow-hidden" ref={containerRef}>
+    <section className="py-24 bg- relative overflow-hidden" ref={containerRef}>
       {/* Background Effects */}
       <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent opacity-40" />
 

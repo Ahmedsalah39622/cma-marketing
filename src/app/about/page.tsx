@@ -6,7 +6,7 @@ export default function AboutPage() {
   return (
   <main className="flex flex-col min-h-screen text-white">
       {/* About Hero Section */}
-      <section className="py-24 bg-black relative overflow-hidden">
+      <section className="py-24 bg- relative overflow-hidden">
         <div className="container mx-auto px-4 relative">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-5xl font-bold mb-6">About Novix</h1>

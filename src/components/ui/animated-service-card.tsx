@@ -12,6 +12,8 @@ interface AnimatedServiceCardProps {
 }
 
 export function AnimatedServiceCard({ title, description, icon: Icon, tech, index }: AnimatedServiceCardProps) {
+  // Defensive: ensure tech is always an array
+  const safeTech = Array.isArray(tech) ? tech : [];
   // Calculate puzzle piece connector positions based on index
   const hasPuzzleLeft = index % 4 !== 0;
   const hasPuzzleRight = (index + 1) % 4 !== 0;
@@ -119,7 +121,7 @@ export function AnimatedServiceCard({ title, description, icon: Icon, tech, inde
 
       {/* Tech tags with stagger animation */}
       <div className="flex flex-wrap gap-2">
-        {tech.map((item, i) => (
+        {safeTech.map((item, i) => (
           <motion.span
             key={item}
             className="px-2 py-1 text-sm bg-black/10 rounded-full text-black"
