@@ -8,25 +8,30 @@ import logoImg from '../../../Gemini_Generated_Image_qt0ozxqt0ozxqt0o-removebg-p
 
 // Use static logo image instead of 3D scene
 
-export default function HeroSection({ content }: { content?: {
-  title?: string;
-  subtitle?: string;
-  getStartedLabel?: string;
-  getStartedTitle?: string;
-  learnMoreLabel?: string;
-  learnMoreTitle?: string;
-  scrollLabel?: string;
-  scrollTitle?: string;
-} }) {
-  // Fallback to static if no content prop
-  const title = content?.title || 'Grow Your Brand with';
-  const subtitle = content?.subtitle || 'We craft data-driven marketing strategies that elevate brands, increase engagement, and drive measurable growth across digital channels — from creative campaigns to analytics-led optimization.';
-  const getStartedLabel = content?.getStartedLabel || 'Get Started';
-  const getStartedTitle = content?.getStartedTitle || 'Get Started';
-  const learnMoreLabel = content?.learnMoreLabel || 'Learn More';
-  const learnMoreTitle = content?.learnMoreTitle || 'Learn More';
-  const scrollLabel = content?.scrollLabel || 'Scroll to next section';
-  const scrollTitle = content?.scrollTitle || 'Scroll to next section';
+import { useEffect, useState } from 'react';
+import { getHomePageContent } from '@/lib/content';
+
+export default function HeroSection() {
+  const [hero, setHero] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getHomePageContent().then(data => {
+      setHero(data.hero || {});
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) return <div className="text-center py-12">Loading hero section...</div>;
+
+  const title = hero.title || 'Grow Your Brand with';
+  const subtitle = hero.subtitle || 'We craft data-driven marketing strategies that elevate brands, increase engagement, and drive measurable growth across digital channels — from creative campaigns to analytics-led optimization.';
+  const getStartedLabel = hero.getStartedLabel || 'Get Started';
+  const getStartedTitle = hero.getStartedTitle || 'Get Started';
+  const learnMoreLabel = hero.learnMoreLabel || 'Learn More';
+  const learnMoreTitle = hero.learnMoreTitle || 'Learn More';
+  const scrollLabel = hero.scrollLabel || 'Scroll to next section';
+  const scrollTitle = hero.scrollTitle || 'Scroll to next section';
   return (
     <section className="relative min-h-[100svh] flex items-center justify-center bg- pt-16 pb-8 md:py-0">
       <div className="container mx-auto px-4 sm:px-6">

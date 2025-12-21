@@ -7,12 +7,20 @@ export async function getHomePageContent() {
 
 // Function to save home page content
 export async function saveHomePageContent(content: any) {
+  // Read existing content and merge so admin pages can send partial section objects
+  const currentRes = await fetch('/api/content/home');
+  const current = currentRes.ok ? await currentRes.json() : {};
+  const payload = { ...(current || {}), ...(content || {}) };
+
   const res = await fetch('/api/content/home', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(content),
+    body: JSON.stringify(payload),
   });
-  if (!res.ok) throw new Error('Failed to save content');
+  if (!res.ok) {
+    const txt = await res.text().catch(() => '');
+    throw new Error('Failed to save content' + (txt ? `: ${txt}` : ''));
+  }
   return res.json();
 }
 // Flexible content model for all site sections, navbar, footer, and media

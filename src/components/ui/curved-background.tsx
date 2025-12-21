@@ -19,7 +19,7 @@ export default function CurvedBackground() {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black pointer-events-none" style={{ willChange: 'opacity, transform', transform: 'translateZ(0)' }} />
       </motion.div>
     </div>
   );

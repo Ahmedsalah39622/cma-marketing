@@ -1,7 +1,60 @@
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { getHomePageContent, saveHomePageContent } from '../../lib/content';
+
+type SocialItem = { name?: string; icon?: string; link?: string };
+type QuickLink = { name?: string; path?: string };
+type FooterContent = {
+  footer: {
+    copyright?: string;
+    address?: string;
+    // legacy simple socials string left for backward compatibility
+    socials?: string;
+    // new structured fields
+    quickLinks?: QuickLink[];
+    services?: string[];
+    contact?: { email?: string; phones?: string[]; location?: string };
+    socialsStructured?: SocialItem[];
+  };
+};
 
 export default function AdminFooterSection() {
+  const [content, setContent] = useState<FooterContent | null>(null);
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    async function fetchContent() {
+      const data = await getHomePageContent();
+      setContent(data);
+    }
+    fetchContent();
+  }, []);
+
+  const handleChange = (field: string, value: string) => {
+    setContent((prev) => prev ? {
+      ...prev,
+      footer: { ...prev.footer, [field]: value },
+    } : prev);
+  };
+
+  const updateFooter = (updater: (f: FooterContent['footer']) => FooterContent['footer']) => {
+    setContent((prev) => {
+      if (!prev) return prev;
+      const baseFooter = prev.footer || {};
+      const updated = updater(baseFooter as FooterContent['footer']);
+      return { ...prev, footer: updated };
+    });
+  };
+
+  const handleSave = async () => {
+    await saveHomePageContent(content);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 1500);
+  };
+
+  if (!content) return <div>Loading...</div>;
+
   return (
     <>
       <Head>
@@ -69,10 +122,224 @@ export default function AdminFooterSection() {
             <div className="container-fluid">
               <div style={{ maxWidth: 800 }}>
                 <h2>Footer Section</h2>
-                <div style={{ margin: 32, color: '#888', textAlign: 'center' }}>
-                  <i className="fas fa-tools" style={{ fontSize: 48, marginBottom: 16 }}></i>
-                  <div>Footer editor coming soon...</div>
+                <div style={{ marginBottom: 16 }}>
+                  <label style={{ fontWeight: 'bold' }}>Copyright Text</label>
+                  <input
+                    value={content.footer?.copyright || ''}
+                    onChange={e => handleChange('copyright', e.target.value)}
+                    className="form-control"
+                    style={{ marginTop: 4 }}
+                  />
                 </div>
+                <div style={{ marginBottom: 16 }}>
+                  <label style={{ fontWeight: 'bold' }}>Company Name</label>
+                  <input
+                    value={(content.footer as any)?.companyName || ''}
+                    onChange={e => handleChange('companyName', e.target.value)}
+                    className="form-control"
+                    style={{ marginTop: 4 }}
+                  />
+                </div>
+                <div style={{ marginBottom: 16 }}>
+                  <label style={{ fontWeight: 'bold' }}>Short Description</label>
+                  <textarea
+                    value={(content.footer as any)?.description || ''}
+                    onChange={e => handleChange('description', e.target.value)}
+                    className="form-control"
+                    style={{ marginTop: 4 }}
+                    rows={3}
+                  />
+                </div>
+                <div style={{ marginBottom: 16 }}>
+                  <label style={{ fontWeight: 'bold' }}>Address</label>
+                  <input
+                    value={content.footer?.address || ''}
+                    onChange={e => handleChange('address', e.target.value)}
+                    className="form-control"
+                    style={{ marginTop: 4 }}
+                  />
+                </div>
+                <div style={{ marginBottom: 24 }}>
+                  <h4>Quick Links</h4>
+                  {(content.footer?.quickLinks || []).map((ql, idx) => (
+                    <div key={idx} className="mb-2 d-flex">
+                      <input
+                        placeholder="Link name"
+                        value={ql.name || ''}
+                        onChange={e => updateFooter(f => {
+                          const arr = Array.isArray(f.quickLinks) ? [...f.quickLinks] : [];
+                          arr[idx] = { ...(arr[idx] || {}), name: e.target.value };
+                          return { ...f, quickLinks: arr };
+                        })}
+                        className="form-control mr-2"
+                        style={{ marginRight: 8 }}
+                      />
+                      <input
+                        placeholder="Path (e.g. /services)"
+                        value={ql.path || ''}
+                        onChange={e => updateFooter(f => {
+                          const arr = Array.isArray(f.quickLinks) ? [...f.quickLinks] : [];
+                          arr[idx] = { ...(arr[idx] || {}), path: e.target.value };
+                          return { ...f, quickLinks: arr };
+                        })}
+                        className="form-control mr-2"
+                        style={{ marginRight: 8 }}
+                      />
+                      <button className="btn btn-danger" type="button" onClick={() => updateFooter(f => {
+                        const arr = Array.isArray(f.quickLinks) ? [...f.quickLinks] : [];
+                        arr.splice(idx, 1);
+                        return { ...f, quickLinks: arr };
+                      })}>Remove</button>
+                    </div>
+                  ))}
+                  <button className="btn btn-secondary" type="button" onClick={() => updateFooter(f => ({
+                    ...f,
+                    quickLinks: [ ...(Array.isArray(f.quickLinks) ? f.quickLinks : []), { name: '', path: '' } ],
+                  }))}>Add Quick Link</button>
+                </div>
+
+                <div style={{ marginBottom: 24 }}>
+                  <h4>Our Services</h4>
+                  {(content.footer?.services || []).map((s, idx) => (
+                    <div key={idx} className="mb-2 d-flex">
+                      <input
+                        placeholder="Service name"
+                        value={s || ''}
+                        onChange={e => updateFooter(f => {
+                          const arr = Array.isArray(f.services) ? [...f.services] : [];
+                          arr[idx] = e.target.value;
+                          return { ...f, services: arr };
+                        })}
+                        className="form-control mr-2"
+                        style={{ marginRight: 8 }}
+                      />
+                      <button className="btn btn-danger" type="button" onClick={() => updateFooter(f => {
+                        const arr = Array.isArray(f.services) ? [...f.services] : [];
+                        arr.splice(idx, 1);
+                        return { ...f, services: arr };
+                      })}>Remove</button>
+                    </div>
+                  ))}
+                  <button className="btn btn-secondary" type="button" onClick={() => updateFooter(f => ({
+                    ...f,
+                    services: [ ...(Array.isArray(f.services) ? f.services : []), '' ],
+                  }))}>Add Service</button>
+                </div>
+
+                <div style={{ marginBottom: 24 }}>
+                  <h4>Contact Us</h4>
+                  <div className="mb-2">
+                    <label style={{ fontWeight: 'bold' }}>Email</label>
+                    <input
+                      value={content.footer?.contact?.email || ''}
+                      onChange={e => updateFooter(f => ({ ...f, contact: { ...(f.contact || {}), email: e.target.value } }))}
+                      className="form-control"
+                      style={{ marginTop: 4 }}
+                    />
+                  </div>
+                  <div className="mb-2">
+                    <label style={{ fontWeight: 'bold' }}>Phones</label>
+                    {(content.footer?.contact?.phones || []).map((p, idx) => (
+                      <div key={idx} className="d-flex mb-2">
+                        <input
+                          placeholder="Phone number"
+                          value={p || ''}
+                          onChange={e => updateFooter(f => {
+                            const phones = Array.isArray(f.contact?.phones) ? [...f.contact!.phones!] : [];
+                            phones[idx] = e.target.value;
+                            return { ...f, contact: { ...(f.contact || {}), phones } };
+                          })}
+                          className="form-control mr-2"
+                          style={{ marginRight: 8 }}
+                        />
+                        <button className="btn btn-danger" type="button" onClick={() => updateFooter(f => {
+                          const phones = Array.isArray(f.contact?.phones) ? [...f.contact!.phones!] : [];
+                          phones.splice(idx, 1);
+                          return { ...f, contact: { ...(f.contact || {}), phones } };
+                        })}>Remove</button>
+                      </div>
+                    ))}
+                    <button className="btn btn-secondary" type="button" onClick={() => updateFooter(f => ({
+                      ...f,
+                      contact: { ...(f.contact || {}), phones: [ ...(Array.isArray(f.contact?.phones) ? f.contact!.phones! : []), '' ] },
+                    }))}>Add Phone</button>
+                  </div>
+                  <div className="mb-2">
+                    <label style={{ fontWeight: 'bold' }}>Location</label>
+                    <input
+                      value={content.footer?.contact?.location || ''}
+                      onChange={e => updateFooter(f => ({ ...f, contact: { ...(f.contact || {}), location: e.target.value } }))}
+                      className="form-control"
+                      style={{ marginTop: 4 }}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: 24 }}>
+                  <h4>Social Media (structured)</h4>
+                  <p style={{ marginBottom: 8 }}>Add social items with a name, icon class (FontAwesome), and link.</p>
+                  {(content.footer?.socialsStructured || []).map((s, idx) => (
+                    <div key={idx} className="mb-2">
+                      <div className="d-flex mb-2">
+                        <input
+                          placeholder="Name (e.g. Twitter)"
+                          value={s.name || ''}
+                          onChange={e => updateFooter(f => {
+                            const arr = Array.isArray(f.socialsStructured) ? [...f.socialsStructured] : [];
+                            arr[idx] = { ...(arr[idx] || {}), name: e.target.value };
+                            return { ...f, socialsStructured: arr };
+                          })}
+                          className="form-control mr-2"
+                          style={{ marginRight: 8 }}
+                        />
+                        <select
+                          value={s.icon || ''}
+                          onChange={e => updateFooter(f => {
+                            const arr = Array.isArray(f.socialsStructured) ? [...f.socialsStructured] : [];
+                            arr[idx] = { ...(arr[idx] || {}), icon: e.target.value };
+                            return { ...f, socialsStructured: arr };
+                          })}
+                          className="form-control mr-2"
+                          style={{ marginRight: 8 }}
+                        >
+                          <option value="">(use default)</option>
+                          <option value="fab fa-facebook-f">Facebook</option>
+                          <option value="fab fa-twitter">Twitter</option>
+                          <option value="fab fa-linkedin-in">LinkedIn</option>
+                          <option value="fab fa-instagram">Instagram</option>
+                          <option value="fab fa-youtube">YouTube</option>
+                          <option value="fab fa-github">GitHub</option>
+                        </select>
+                        <input
+                          placeholder="Link (https://...)"
+                          value={s.link || ''}
+                          onChange={e => updateFooter(f => {
+                            const arr = Array.isArray(f.socialsStructured) ? [...f.socialsStructured] : [];
+                            arr[idx] = { ...(arr[idx] || {}), link: e.target.value };
+                            return { ...f, socialsStructured: arr };
+                          })}
+                          className="form-control mr-2"
+                          style={{ marginRight: 8 }}
+                        />
+                        <button className="btn btn-danger" type="button" onClick={() => updateFooter(f => {
+                          const arr = Array.isArray(f.socialsStructured) ? [...f.socialsStructured] : [];
+                          arr.splice(idx, 1);
+                          return { ...f, socialsStructured: arr };
+                        })}>Remove</button>
+                      </div>
+                    </div>
+                  ))}
+                  <button className="btn btn-secondary" type="button" onClick={() => updateFooter(f => ({
+                    ...f,
+                    socialsStructured: [ ...(Array.isArray(f.socialsStructured) ? f.socialsStructured : []), { name: '', icon: '', link: '' } ],
+                  }))}>Add Social</button>
+                </div>
+                <button type="button" className="btn btn-primary" onClick={handleSave}>
+                  Save Footer Section
+                </button>
+                {saved && (
+                  <span style={{ marginLeft: 16, color: 'green' }}>Saved!</span>
+                )}
               </div>
             </div>
           </section>

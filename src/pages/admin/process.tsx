@@ -1,7 +1,89 @@
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { getHomePageContent, saveHomePageContent } from '../../lib/content';
+
+
+type ProcessStep = {
+  number: string;
+  title: string;
+  description: string;
+  icon: string;
+};
+
+type ProcessContent = {
+  process: {
+    heading?: string;
+    steps?: ProcessStep[];
+  };
+};
 
 export default function AdminProcessSection() {
+  const [content, setContent] = useState<ProcessContent | null>(null);
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    async function fetchContent() {
+      const data = await getHomePageContent();
+      setContent(data);
+    }
+    fetchContent();
+  }, []);
+
+
+  const handleChange = (field: string, value: string) => {
+    setContent((prev) => prev ? {
+      ...prev,
+      process: { ...prev.process, [field]: value },
+    } : prev);
+  };
+
+  const handleStepChange = (idx: number, key: keyof ProcessStep, value: string) => {
+    setContent(prev => {
+      if (!prev) return prev;
+      const steps = Array.isArray(prev.process.steps) ? [...prev.process.steps] : [];
+      steps[idx] = { ...steps[idx], [key]: value };
+      return {
+        ...prev,
+        process: { ...prev.process, steps },
+      };
+    });
+  };
+
+  const handleAddStep = () => {
+    setContent(prev => {
+      if (!prev) return prev;
+      const steps = Array.isArray(prev.process.steps) ? [...prev.process.steps] : [];
+      steps.push({ number: String(steps.length + 1).padStart(2, '0'), title: '', description: '', icon: '' });
+      return {
+        ...prev,
+        process: { ...prev.process, steps },
+      };
+    });
+  };
+
+  const handleRemoveStep = (idx: number) => {
+    setContent(prev => {
+      if (!prev) return prev;
+      const steps = Array.isArray(prev.process.steps) ? [...prev.process.steps] : [];
+      steps.splice(idx, 1);
+      // Re-number steps
+      steps.forEach((s, i) => s.number = String(i + 1).padStart(2, '0'));
+      return {
+        ...prev,
+        process: { ...prev.process, steps },
+      };
+    });
+  };
+
+  const handleSave = async () => {
+    await saveHomePageContent(content);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 1500);
+  };
+
+  if (!content) return <div>Loading...</div>;
+
   return (
     <>
       <Head>
@@ -69,10 +151,76 @@ export default function AdminProcessSection() {
             <div className="container-fluid">
               <div style={{ maxWidth: 800 }}>
                 <h2>Process Section</h2>
-                <div style={{ margin: 32, color: '#888', textAlign: 'center' }}>
-                  <i className="fas fa-tools" style={{ fontSize: 48, marginBottom: 16 }}></i>
-                  <div>Process editor coming soon...</div>
+                <div style={{ marginBottom: 16 }}>
+                  <label style={{ fontWeight: 'bold' }}>Heading</label>
+                  <input
+                    value={content.process?.heading || ''}
+                    onChange={e => handleChange('heading', e.target.value)}
+                    className="form-control"
+                    style={{ marginTop: 4 }}
+                  />
                 </div>
+
+                <div style={{ marginBottom: 16 }}>
+                  <label style={{ fontWeight: 'bold' }}>Steps</label>
+                  <div>
+                    {(Array.isArray(content.process?.steps) ? content.process.steps : []).map((step, idx) => (
+                      <div key={idx} style={{ border: '1px solid #eee', borderRadius: 8, padding: 12, marginBottom: 12, background: '#fafbfc' }}>
+                        <div className="row">
+                          <div className="col-md-2 mb-2">
+                            <label>Number</label>
+                            <input
+                              value={step.number}
+                              onChange={e => handleStepChange(idx, 'number', e.target.value)}
+                              className="form-control"
+                              type="text"
+                            />
+                          </div>
+                          <div className="col-md-3 mb-2">
+                            <label>Title</label>
+                            <input
+                              value={step.title}
+                              onChange={e => handleStepChange(idx, 'title', e.target.value)}
+                              className="form-control"
+                              type="text"
+                            />
+                          </div>
+                          <div className="col-md-5 mb-2">
+                            <label>Description</label>
+                            <input
+                              value={step.description}
+                              onChange={e => handleStepChange(idx, 'description', e.target.value)}
+                              className="form-control"
+                              type="text"
+                            />
+                          </div>
+                          <div className="col-md-2 mb-2">
+                            <label>Icon</label>
+                            <input
+                              value={step.icon}
+                              onChange={e => handleStepChange(idx, 'icon', e.target.value)}
+                              className="form-control"
+                              type="text"
+                              placeholder="e.g. Rocket"
+                            />
+                          </div>
+                        </div>
+                        <button type="button" className="btn btn-danger btn-sm mt-2" onClick={() => handleRemoveStep(idx)}>
+                          Remove Step
+                        </button>
+                      </div>
+                    ))}
+                    <button type="button" className="btn btn-success" onClick={handleAddStep}>
+                      Add Step
+                    </button>
+                  </div>
+                </div>
+                <button type="button" className="btn btn-primary" onClick={handleSave}>
+                  Save Process Section
+                </button>
+                {saved && (
+                  <span style={{ marginLeft: 16, color: 'green' }}>Saved!</span>
+                )}
               </div>
             </div>
           </section>

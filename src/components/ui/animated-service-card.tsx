@@ -82,6 +82,7 @@ export function AnimatedServiceCard({ title, description, icon: Icon, tech, inde
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ delay: index * 0.1 }}
+        style={{ willChange: 'opacity, transform', pointerEvents: 'none', transform: 'translateZ(0)' }}
       />
 
       {/* Icon with floating animation */}

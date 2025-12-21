@@ -1,7 +1,53 @@
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { getHomePageContent, saveHomePageContent } from '../../lib/content';
+
+type Story = { name: string; position?: string; content: string };
+type ClientStoriesContent = { clientSuccessStories: Story[] };
 
 export default function AdminClientSuccessStoriesSection() {
+  const [content, setContent] = useState<ClientStoriesContent | null>(null);
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    async function fetchContent() {
+      const data = await getHomePageContent();
+      setContent({ clientSuccessStories: data.clientSuccessStories || [] });
+      // Prefer full content object in future; admin pages may send partials which are merged server-side.
+    }
+    fetchContent();
+  }, []);
+
+  const updateStory = (index: number, field: keyof Story, value: string) => {
+    setContent((prev) => {
+      if (!prev) return prev;
+      const stories = [...prev.clientSuccessStories];
+      stories[index] = { ...stories[index], [field]: value } as Story;
+      return { ...prev, clientSuccessStories: stories };
+    });
+  };
+
+  const addStory = () => {
+    setContent((prev) => prev ? { ...prev, clientSuccessStories: [...prev.clientSuccessStories, { name: '', position: '', content: '' }] } : prev);
+  };
+
+  const removeStory = (index: number) => {
+    setContent((prev) => {
+      if (!prev) return prev;
+      const stories = prev.clientSuccessStories.filter((_, i) => i !== index);
+      return { ...prev, clientSuccessStories: stories };
+    });
+  };
+
+  const handleSave = async () => {
+    await saveHomePageContent(content);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 1500);
+  };
+
+  if (!content) return <div>Loading...</div>;
+
   return (
     <>
       <Head>
@@ -67,12 +113,34 @@ export default function AdminClientSuccessStoriesSection() {
         <div className="content-wrapper">
           <section className="content pt-4">
             <div className="container-fluid">
-              <div style={{ maxWidth: 800 }}>
-                <h2>Client Success Stories Section</h2>
-                <div style={{ margin: 32, color: '#888', textAlign: 'center' }}>
-                  <i className="fas fa-tools" style={{ fontSize: 48, marginBottom: 16 }}></i>
-                  <div>Client Success Stories editor coming soon...</div>
+              <div style={{ maxWidth: 900 }}>
+                <h2>Client Success Stories</h2>
+                <div style={{ marginBottom: 16 }}>
+                  {content.clientSuccessStories.map((s, i) => (
+                    <div key={i} style={{ marginBottom: 12, padding: 12, border: '1px solid #eee', borderRadius: 6 }}>
+                      <div style={{ marginBottom: 8 }}>
+                        <label style={{ fontWeight: 'bold' }}>Name</label>
+                        <input value={s.name} onChange={e => updateStory(i, 'name', e.target.value)} className="form-control" style={{ marginTop: 4 }} />
+                      </div>
+                      <div style={{ marginBottom: 8 }}>
+                        <label style={{ fontWeight: 'bold' }}>Position</label>
+                        <input value={s.position} onChange={e => updateStory(i, 'position', e.target.value)} className="form-control" style={{ marginTop: 4 }} />
+                      </div>
+                      <div style={{ marginBottom: 8 }}>
+                        <label style={{ fontWeight: 'bold' }}>Content</label>
+                        <textarea value={s.content} onChange={e => updateStory(i, 'content', e.target.value)} rows={3} className="form-control" style={{ marginTop: 4 }} />
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <button className="btn btn-sm btn-danger" onClick={() => removeStory(i)}>Remove</button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
+                <div style={{ marginBottom: 16 }}>
+                  <button className="btn btn-secondary" onClick={addStory}>Add Story</button>
+                </div>
+                <button className="btn btn-primary" onClick={handleSave}>Save Stories</button>
+                {saved && <span style={{ marginLeft: 12, color: 'green' }}>Saved!</span>}
               </div>
             </div>
           </section>

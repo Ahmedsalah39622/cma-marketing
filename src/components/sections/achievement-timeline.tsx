@@ -148,7 +148,7 @@ export default function AchievementTimeline() {
                 >
                   {/* Content */}
                   <div className={`w-1/2 ${isEven ? 'pr-12 text-right' : 'pl-12 text-left'}`}>
-                    <div className="bg-white/5 sm:backdrop-blur-sm p-6 rounded-2xl border border-white/10 
+                    <div className="bg-white/5 p-6 rounded-2xl border border-white/10 
                                   hover:bg-white/10 transition-colors">
                       <span className="text-primary font-bold text-xl mb-2 block">
                         {achievement.year}

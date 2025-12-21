@@ -1,11 +1,39 @@
+import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { getHomePageContent, saveHomePageContent } from '../../lib/content';
+
+type NavLink = { title?: string; href?: string };
 
 export default function AdminNavbarSection() {
+  const [content, setContent] = useState<any | null>(null);
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    async function fetchContent() {
+      const data = await getHomePageContent();
+      setContent(data);
+    }
+    fetchContent();
+  }, []);
+
+  const update = (updater: (c: any) => any) => setContent((prev) => prev ? updater(prev) : prev);
+
+  const handleSave = async () => {
+    await saveHomePageContent(content);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 1400);
+  };
+
+  if (!content) return <div>Loading...</div>;
+
+  const nav = content.navbar || content.mainNavbar || content['main-navbar'] || { links: [] };
+  const links: NavLink[] = Array.isArray(nav.links) ? nav.links : [];
+
   return (
     <>
       <Head>
-        <title>Edit Navbar Section</title>
+        <title>Edit Navbar</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="stylesheet" href="/adminlte/css/adminlte.min.css" />
         <link rel="stylesheet" href="/adminlte/plugins/fontawesome-free/css/all.min.css" />
@@ -25,54 +53,87 @@ export default function AdminNavbarSection() {
           <Link href="/admin" className="brand-link">
             <span className="brand-text font-weight-light">AdminLTE 3</span>
           </Link>
-          <div className="sidebar">
-            <nav className="mt-2">
-              <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                <li className="nav-item has-treeview menu-open">
-                  <div className="nav-link w-100 text-left" style={{ cursor: 'pointer' }}>
-                    <i className="nav-icon fas fa-folder"></i>
-                    <p>
-                      Main Page Sections
-                      <i className="right fas fa-angle-down" style={{ marginLeft: 8 }}></i>
-                    </p>
-                  </div>
-                  <ul className="nav nav-treeview" style={{ marginLeft: 16, display: 'block' }}>
-                    <li className="nav-item">
-                      <Link href="/admin/hero" className="nav-link">Hero Section</Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link href="/admin/services" className="nav-link">Services Section</Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link href="/admin/solutions" className="nav-link">Solutions Section</Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link href="/admin/navbar" className="nav-link active">Navbar</Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link href="/admin/footer" className="nav-link">Footer</Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link href="/admin/process" className="nav-link">Process</Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link href="/admin/client-success-stories" className="nav-link">Client Success Stories</Link>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </nav>
-          </div>
         </aside>
         <div className="content-wrapper">
           <section className="content pt-4">
             <div className="container-fluid">
-              <div style={{ maxWidth: 800 }}>
-                <h2>Navbar Section</h2>
-                <div style={{ margin: 32, color: '#888', textAlign: 'center' }}>
-                  <i className="fas fa-tools" style={{ fontSize: 48, marginBottom: 16 }}></i>
-                  <div>Navbar editor coming soon...</div>
+              <div style={{ maxWidth: 900 }}>
+                <h2>Navbar</h2>
+
+                <div style={{ marginBottom: 12 }}>
+                  <label style={{ fontWeight: 'bold' }}>Brand Text</label>
+                  <input
+                    className="form-control"
+                    value={nav.brandText || ''}
+                    onChange={e => update(c => ({ ...c, navbar: { ...(c.navbar || {}), brandText: e.target.value } }))}
+                    style={{ marginTop: 6 }}
+                  />
                 </div>
+
+                <div style={{ marginBottom: 12 }}>
+                  <label style={{ fontWeight: 'bold' }}>Logo Image URL</label>
+                  <input
+                    className="form-control"
+                    value={nav.logo || ''}
+                    onChange={e => update(c => ({ ...c, navbar: { ...(c.navbar || {}), logo: e.target.value } }))}
+                    style={{ marginTop: 6 }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: 12 }}>
+                  <label style={{ fontWeight: 'bold' }}>Primary CTA Label</label>
+                  <input
+                    className="form-control"
+                    value={nav.ctaLabel || ''}
+                    onChange={e => update(c => ({ ...c, navbar: { ...(c.navbar || {}), ctaLabel: e.target.value } }))}
+                    style={{ marginTop: 6 }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: 16 }}>
+                  <label style={{ fontWeight: 'bold' }}>Primary CTA Link</label>
+                  <input
+                    className="form-control"
+                    value={nav.ctaLink || ''}
+                    onChange={e => update(c => ({ ...c, navbar: { ...(c.navbar || {}), ctaLink: e.target.value } }))}
+                    style={{ marginTop: 6 }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: 20 }}>
+                  <h4>Nav Links</h4>
+                  {links.map((l, idx) => (
+                    <div key={idx} className="d-flex mb-2">
+                      <input value={l.title || ''} placeholder="Title" className="form-control mr-2" style={{ marginRight: 8 }} onChange={e => update(c => {
+                        const base = c.navbar || {};
+                        const arr = Array.isArray(base.links) ? [...base.links] : [];
+                        arr[idx] = { ...(arr[idx] || {}), title: e.target.value };
+                        return { ...c, navbar: { ...base, links: arr } };
+                      })} />
+                      <input value={l.href || ''} placeholder="Href (e.g. /about)" className="form-control mr-2" style={{ marginRight: 8 }} onChange={e => update(c => {
+                        const base = c.navbar || {};
+                        const arr = Array.isArray(base.links) ? [...base.links] : [];
+                        arr[idx] = { ...(arr[idx] || {}), href: e.target.value };
+                        return { ...c, navbar: { ...base, links: arr } };
+                      })} />
+                      <button className="btn btn-danger" type="button" onClick={() => update(c => {
+                        const base = c.navbar || {};
+                        const arr = Array.isArray(base.links) ? [...base.links] : [];
+                        arr.splice(idx, 1);
+                        return { ...c, navbar: { ...base, links: arr } };
+                      })}>Remove</button>
+                    </div>
+                  ))}
+                  <button className="btn btn-secondary" type="button" onClick={() => update(c => {
+                    const base = c.navbar || {};
+                    const arr = Array.isArray(base.links) ? [...base.links] : [];
+                    arr.push({ title: '', href: '' });
+                    return { ...c, navbar: { ...base, links: arr } };
+                  })}>Add Link</button>
+                </div>
+
+                <button type="button" className="btn btn-primary" onClick={handleSave}>Save Navbar</button>
+                {saved && <span style={{ marginLeft: 12, color: 'green' }}>Saved!</span>}
               </div>
             </div>
           </section>

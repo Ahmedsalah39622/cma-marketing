@@ -18,65 +18,32 @@ const iconMap = {
 };
 
 
-export default function ServicesSection({ content }: { content?: { heading?: string; services?: any[] } }) {
-  // Use content prop if provided, else fallback to static
-  const heading = content?.heading || 'Our Solutions';
-  let services = content?.services;
-  if (!Array.isArray(services)) {
-    services = [];
-  }
-  if (!services.length) {
-    services = [
-      {
-        title: 'ERP Solutions',
-        description: 'Custom Enterprise Resource Planning systems to streamline your business operations and improve efficiency.',
-        icon: 'Database',
-        tech: ['SAP', 'Oracle', 'Custom Solutions'],
-      },
-      {
-        title: 'System Administration',
-        description: 'Expert management and maintenance of your IT infrastructure, ensuring optimal performance and security.',
-        icon: 'Server',
-        tech: ['Windows Server', 'Linux', 'Cloud Infrastructure'],
-      },
-      {
-        title: 'Web Development',
-        description: 'Modern, responsive websites and web applications built with cutting-edge technologies.',
-        icon: 'Globe',
-        tech: ['Next.js', 'React', 'Node.js'],
-      },
-      {
-        title: 'POS & Cashier Systems',
-        description: 'Reliable point-of-sale and inventory management solutions for retail businesses.',
-        icon: 'ShoppingCart',
-        tech: ['Custom POS', 'Inventory Management', 'Payment Integration'],
-      },
-      {
-        title: 'Custom Software',
-        description: 'Tailored software solutions designed to meet your specific business needs and challenges.',
-        icon: 'Code2',
-        tech: ['Desktop Apps', 'Mobile Apps', 'Web Apps'],
-      },
-      {
-        title: 'DevOps Services',
-        description: 'Streamline your development and operations with modern DevOps practices and tools.',
-        icon: 'Cog',
-        tech: ['CI/CD', 'Docker', 'Kubernetes'],
-      },
-      {
-        title: 'Cloud Solutions',
-        description: 'Expert cloud consulting and implementation services for scalable infrastructure.',
-        icon: 'Cloud',
-        tech: ['AWS', 'Azure', 'GCP'],
-      },
-      {
-        title: 'Security Services',
-        description: 'Comprehensive cybersecurity solutions to protect your business assets and data.',
-        icon: 'Shield',
-        tech: ['Security Audits', 'Penetration Testing', 'Compliance'],
-      },
-    ];
-  }
+
+import { useEffect, useState } from 'react';
+import { getHomePageContent } from '@/lib/content';
+
+type Service = {
+  title: string;
+  description: string;
+  icon: string;
+  tech?: string[];
+};
+
+export default function ServicesSection() {
+  const [services, setServices] = useState<Service[]>([]);
+  const [heading, setHeading] = useState('Our Solutions');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getHomePageContent().then(data => {
+      setServices(data.services?.services || []);
+      setHeading(data.services?.heading || 'Our Solutions');
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) return <div className="text-center py-12">Loading services...</div>;
+  if (!services.length) return <div className="text-center py-12">No services available.</div>;
 
   return (
     <section className="relative py-24 bg-">
@@ -98,14 +65,9 @@ export default function ServicesSection({ content }: { content?: { heading?: str
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {services.map((service, index) => {
-            // Defensive: If icon is a string, map to Lucide icon, else fallback to Database
             let Icon = Database;
-            if (service.icon) {
-              if (typeof service.icon === 'string' && iconMap[service.icon]) {
-                Icon = iconMap[service.icon];
-              } else if (typeof service.icon === 'function') {
-                Icon = service.icon;
-              }
+            if (service.icon && iconMap[service.icon]) {
+              Icon = iconMap[service.icon];
             }
             return (
               <AnimatedServiceCard

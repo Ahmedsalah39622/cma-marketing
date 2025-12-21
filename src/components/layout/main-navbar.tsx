@@ -9,14 +9,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
+import { getHomePageContent } from '@/lib/content';
 
-const navLinks = [
+const defaultNavLinks = [
   { title: 'About', href: '/about' },
   { title: 'Services', href: '/services' },
   { title: 'Solutions', href: '/solutions' },
- // { title: 'Case Studies', href: '/case-studies' },//
   { title: 'Technology', href: '/technology' },
-  //{ title: 'Contact', href: '/contact' },
 ];
 
 
@@ -25,10 +24,38 @@ export default function MainNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [navLinks, setNavLinks] = useState(defaultNavLinks);
+  const [brandText, setBrandText] = useState<string | null>(null);
 
   // Close menu when route changes
   useEffect(() => {
     setIsMenuOpen(false);
+  }, []);
+
+  // Load editable navbar content (if available)
+  useEffect(() => {
+    let mounted = true;
+    async function load() {
+      try {
+        const data = await getHomePageContent();
+        if (!mounted || !data) return;
+        // Support multiple formats: array of {text, href} or comma-separated string
+        const nav = data.navbar || data.mainNavbar || data['main-navbar'] || null;
+        if (nav) {
+          if (Array.isArray(nav.links)) {
+            setNavLinks(nav.links.map((l: any) => ({ title: l.text || l.title || String(l), href: l.href || ('/' + (l.text || l.title || '').toString().toLowerCase().replace(/\s+/g, '-')) })));
+          } else if (typeof nav.links === 'string') {
+            const parts = nav.links.split(',').map((s: string) => s.trim()).filter(Boolean);
+            setNavLinks(parts.map((t: string) => ({ title: t, href: '/' + t.toLowerCase().replace(/\s+/g, '-') })));
+          }
+          if (nav.brandText) setBrandText(nav.brandText);
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+    load();
+    return () => { mounted = false; };
   }, []);
 
   // Handle scroll direction detection
@@ -67,14 +94,19 @@ export default function MainNavbar() {
             whileTap={{ scale: 0.95 }}
             className="relative z-50"
           >
-            <Link href="/" className="flex items-center space-x-2 md:space-x-3">
-              <Image
-                src="/b5e28d61-f2d1-469f-884d-f623c1498887-removebg-preview.png"
-                alt="Novix Logo"
-                width={280}
-                height={100}
-                className="object-contain w-[180px] h-[60px] md:w-[260px] md:h-[90px]"
-              />
+              <Link href="/" className="flex items-center space-x-2 md:space-x-3">
+              {/* If admin provided brandText, show it as text; otherwise show logo image */}
+              {brandText ? (
+                <span className="text-white font-bold text-lg md:text-2xl">{brandText}</span>
+              ) : (
+                <Image
+                  src="/b5e28d61-f2d1-469f-884d-f623c1498887-removebg-preview.png"
+                  alt="Novix Logo"
+                  width={280}
+                  height={100}
+                  className="object-contain w-[180px] h-[60px] md:w-[260px] md:h-[90px]"
+                />
+              )}
             </Link>
           </motion.div>
 

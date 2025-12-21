@@ -52,42 +52,66 @@ export default function AnimatedStatsSlider() {
   }, []);
 
   // Deterministic values for hydration safety
+  // Reduce animated shapes to minimize repaints; smaller set + will-change hint
   const bgShapes = [
-    { w: 400, h: 350, l: 10, t: 15, x: 30, y: -20, d: 22 },
     { w: 500, h: 420, l: 60, t: 40, x: -25, y: 15, d: 28 },
-    { w: 350, h: 500, l: 30, t: 60, x: 20, y: 30, d: 24 },
-    { w: 600, h: 300, l: 75, t: 25, x: -35, y: -15, d: 26 },
-    { w: 450, h: 380, l: 45, t: 70, x: 15, y: -25, d: 30 },
+    { w: 450, h: 380, l: 45, t: 70, x: 15, y: -25, d: 30 }
   ];
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return;
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mq.matches);
+    const handler = () => setPrefersReducedMotion(mq.matches);
+    mq.addEventListener?.('change', handler);
+    return () => mq.removeEventListener?.('change', handler);
+  }, []);
   return (
     <section id="stats" className="py-20 bg- text-white relative overflow-hidden">
       {/* Animated background */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-secondary/10" />
-        {bgShapes.map((shape, i) => (
-          <motion.div
-            key={i}
-            className="absolute bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full blur-3xl"
-            style={{
-              width: `${shape.w}px`,
-              height: `${shape.h}px`,
-              left: `${shape.l}%`,
-              top: `${shape.t}%`,
-            }}
-            animate={{
-              x: [0, shape.x, 0],
-              y: [0, shape.y, 0],
-              opacity: [0.3, 0.5, 0.3],
-            }}
-            transition={{
-              duration: shape.d,
-              repeat: Infinity,
-              repeatType: "reverse",
-              ease: "easeInOut",
-              delay: i * 0.5,
-            }}
-          />
-        ))}
+        {bgShapes.map((shape, i) => {
+          const commonStyle: React.CSSProperties = {
+            width: `${shape.w}px`,
+            height: `${shape.h}px`,
+            left: `${shape.l}%`,
+            top: `${shape.t}%`,
+            willChange: 'transform, opacity'
+          };
+          if (prefersReducedMotion) {
+            return (
+              <div
+                key={i}
+                className="absolute bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full"
+                style={commonStyle}
+                aria-hidden
+              />
+            );
+          }
+
+          return (
+            <motion.div
+              key={i}
+              className="absolute bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full"
+              style={commonStyle}
+              animate={{
+                x: [0, shape.x, 0],
+                y: [0, shape.y, 0],
+                opacity: [0.35, 0.55, 0.35],
+              }}
+              transition={{
+                duration: shape.d,
+                repeat: Infinity,
+                repeatType: 'reverse',
+                ease: 'easeInOut',
+                delay: i * 0.8,
+              }}
+              aria-hidden
+            />
+          );
+        })}
       </div>
 
       {/* Stats Section */}

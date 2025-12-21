@@ -1,27 +1,120 @@
 {
+  "clientSuccessStories": [
+    {
+      "name": "sdfsdsfdfsdf",
+      "position": "gfhghhgjhk",
+      "content": "mhkk,jklklk;kl;kl;;;;;;;;;;;;;;;;;;;;;;;;;;"
+    },
+    {
+      "name": "asddddddddddddddddddd",
+      "position": "asdddddddddddddd",
+      "content": "dddasdddddddddd"
+    }
+  ],
+  "features": [
+    {
+      "icon": "Server",
+      "title": "Enterprise Infrastructure",
+      "description": "Scalable, secure, and reliable infrastructure solutions built for enterprise needs.",
+      "color": "from-blue-500/20 to-blue-600/20"
+    },
+    {
+      "icon": "Shield",
+      "title": "Maximum Security",
+      "description": "Advanced security protocols and real-time threat monitoring for complete protection.",
+      "color": "from-green-500/20 to-green-600/20"
+    },
+    {
+      "icon": "Zap",
+      "title": "Lightning Fast",
+      "description": "Optimized performance and rapid deployment for mission-critical applications.",
+      "color": "from-yellow-500/20 to-yellow-600/20"
+    },
+    {
+      "icon": "Users",
+      "title": "Dedicated Support",
+      "description": "24/7 expert support team committed to your success and satisfaction.",
+      "color": "from-purple-500/20 to-purple-600/20"
+    },
+    {
+      "icon": "Code2",
+      "title": "Custom Development",
+      "description": "Tailored solutions designed specifically for your unique business needs.",
+      "color": "from-red-500/20 to-red-600/20"
+    },
+    {
+      "icon": "Heart",
+      "title": "Client Satisfaction",
+      "description": "98% client satisfaction rate with long-term partnership approach.",
+      "color": "from-pink-500/20 to-pink-600/20"
+    }
+  ],
   "hero": {
-    "title": "Marketing",
-    "subtitle": "Welcome",
-    "getStartedLabel": "Get Started"
-  },
-  "about": {
-    "heading": "About Main",
-    "description": "About us content."
+    "title": "asdasadsd",
+    "subtitle": "ddddddddddddd"
   },
   "services": {
-    "heading": "Services ",
-    "description": "Services overview."
+    "heading": "sdffdf",
+    "description": "efdfsfsfsdd",
+    "services": [
+      {
+        "title": "sdffsdff",
+        "description": "fsdsdfsfdsfdsd"
+      }
+    ]
   },
   "solutions": {
-    "heading": "Solutions Main",
-    "description": "Solutions overview."
+    "heading": "sdsdfsf",
+    "description": "sdsdfdfdddddddddddf",
+    "solutions": [
+      {
+        "title": "sdsdff",
+        "description": "ffsdfsd"
+      }
+    ]
   },
-  "technology": {
-    "heading": "Technology Main",
-    "description": "Technology overview."
+  "process": {
+    "heading": "Our Process",
+    "steps": [
+      {
+        "number": "01",
+        "title": "Discovery",
+        "description": "We begin with a deep dive into your business needs, goals, and challenges to ensure perfect alignment.",
+        "icon": "SearchCode"
+      },
+      {
+        "number": "02",
+        "title": "Strategy",
+        "description": "Our experts develop a comprehensive technology strategy tailored to your specific requirements.",
+        "icon": "GitBranch"
+      },
+      {
+        "number": "03",
+        "title": "Development",
+        "description": "Using cutting-edge technologies, we bring your solution to life with precision and expertise.",
+        "icon": "Code2"
+      },
+      {
+        "number": "04",
+        "title": "Testing",
+        "description": "Rigorous testing ensures your solution performs flawlessly under real-world conditions.",
+        "icon": "TestTube2"
+      },
+      {
+        "number": "05",
+        "title": "Deployment",
+        "description": "Smooth deployment with zero downtime, followed by comprehensive training and documentation.",
+        "icon": "Rocket"
+      }
+    ]
   },
-  "contact": {
-    "heading": "Contact Main",
-    "description": "Contact info."
+  "footer": {
+    "quickLinks": [
+      {
+        "name": "sdsdfdsfds",
+        "path": "/sdfsdddf"
+      }
+    ],
+    "companyName": "CMA Markting"
   }
 }
