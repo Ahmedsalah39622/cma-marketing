@@ -73,7 +73,7 @@ export default function ProcessSection() {
                     </div>
                   </div>
                   <h3 className="text-2xl font-semibold mb-3 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">{step.title}</h3>
-                  <p className="text-gray-300 leading-relaxed">{step.description}</p>
+                  <p className="text-gray-300 leading-relaxed break-words whitespace-pre-line">{step.description}</p>
                 </div>
               </motion.div>
             );

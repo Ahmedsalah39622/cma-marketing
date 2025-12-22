@@ -59,6 +59,9 @@ export default function PartnersSection({ partners }: { partners?: Partner[] }) 
                   )}
                 </div>
                 <div className={styles.cardTitle}>{p.name}</div>
+                {p.description && (
+                  <div className={styles.cardDesc}>{p.description}</div>
+                )}
                 <div className={styles.socialRow}>
                   {Array.isArray(p.socials) && p.socials.map((s: any) => (
                     s.url ? (

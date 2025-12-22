@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { getHomePageContent, saveHomePageContent } from '../../lib/content';
 
 type Social = { platform: string; url: string };
-type Partner = { name: string; logoUrl?: string; socials?: Social[] };
+type Partner = { name: string; logoUrl?: string; socials?: Social[]; description?: string };
 
 export default function AdminPartners() {
   const [content, setContent] = useState<any | null>(null);
@@ -39,7 +39,10 @@ export default function AdminPartners() {
   };
 
   const handleAdd = () => {
-    setContent((prev: any) => ({ ...(prev || {}), partners: [...(Array.isArray(prev?.partners) ? prev.partners : []), { name: '', logoUrl: '', socials: [] }] }));
+    setContent((prev: any) => ({
+      ...(prev || {}),
+      partners: [...(Array.isArray(prev?.partners) ? prev.partners : []), { name: '', logoUrl: '', socials: [], description: '' }]
+    }));
   };
 
   const handleRemove = (idx: number) => {
@@ -132,11 +135,6 @@ export default function AdminPartners() {
                       <i className="right fas fa-angle-down" style={{ marginLeft: 8 }}></i>
                     </p>
                   </div>
-                  <ul className="nav nav-treeview" style={{ marginLeft: 16, display: 'block' }}>
-                    <li className="nav-item">
-                      <Link href="/admin/partners" className="nav-link active">Partners Section</Link>
-                    </li>
-                  </ul>
                 </li>
               </ul>
             </nav>
@@ -144,101 +142,49 @@ export default function AdminPartners() {
         </aside>
         <div className="content-wrapper">
           <section className="content pt-4">
-            <div className="container-fluid">
-              <div style={{ maxWidth: 900 }}>
-                <h2>Partners Section</h2>
-                <div style={{ marginBottom: 12 }}>
-                  <button type="button" className="btn btn-success" onClick={handleAdd}>Add Partner</button>
-                </div>
-                {(partners || []).map((partner, idx) => (
-                  <div key={idx} style={{ border: '1px solid #eee', borderRadius: 8, padding: 12, marginBottom: 12, background: '#fafbfc' }}>
-                    <div className="row">
-                      <div className="col-md-4 mb-2">
+            <div className="container-fluid" style={{ maxWidth: '1100px', margin: '0 auto', padding: '32px 24px' }}>
+              <h2>Edit Partners Section</h2>
+              <button className="btn btn-success mb-3" onClick={handleAdd}><i className="fas fa-plus"></i> Add Partner</button>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '32px' }}>
+                {partners.map((p, idx) => (
+                  <div key={idx} className="card mb-4" style={{ flex: '1 1 340px', minWidth: '320px', maxWidth: '420px' }}>
+                    <div className="card-body">
+                      <div className="form-group">
                         <label>Name</label>
-                        <input className="form-control" value={partner.name || ''} onChange={e => handleChange(idx, 'name', e.target.value)} />
+                        <input type="text" className="form-control" value={p.name} onChange={e => handleChange(idx, 'name', e.target.value)} />
                       </div>
-                      <div className="col-md-4 mb-2">
-                        <label>Logo URL / Image</label>
-                        <input className="form-control" value={partner.logoUrl || ''} onChange={e => handleChange(idx, 'logoUrl', e.target.value)} />
-                        <input className="form-control mt-2" type="file" onChange={e => handleFileUpload(idx, e.target.files?.[0])} />
+                      <div className="form-group">
+                        <label>Description</label>
+                        <textarea className="form-control" value={p.description || ''} onChange={e => handleChange(idx, 'description', e.target.value)} rows={2} placeholder="Enter partner description" />
                       </div>
-                      <div className="col-md-4 mb-2">
-                        <label>CTA Button Text</label>
-                        <input className="form-control" value={partner.cta || ''} onChange={e => handleChange(idx, 'cta', e.target.value)} />
-                        <label style={{ marginTop: 8 }}>Accent Color</label>
-                        <input type="color" className="form-control" value={partner.color || '#0ea5a4'} onChange={e => handleChange(idx, 'color', e.target.value)} />
+                      <div className="form-group">
+                        <label>Logo</label>
+                        <input type="file" className="form-control" accept="image/*" onChange={e => handleFileUpload(idx, e.target.files?.[0])} />
+                        {p.logoUrl && <img src={p.logoUrl} alt="logo" style={{ width: 60, height: 60, marginTop: 8, borderRadius: 8 }} />}
                       </div>
-                      <div className="col-md-4 mb-2">
-                        <label>Preview</label>
-                        <div style={{ height: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff', borderRadius: 4 }}>
-                          {partner.logoUrl ? <img src={partner.logoUrl as string} alt="logo" style={{ maxHeight: 56 }} /> : <span className="text-muted">No image</span>}
-                        </div>
-                      </div>
-                    </div>
-                    <div style={{ marginTop: 8 }}>
-                      <label style={{ fontWeight: 'bold' }}>Socials</label>
-                      {(Array.isArray(partner.socials) ? partner.socials : []).map((s, si) => (
-                        <div className="row" key={si} style={{ marginBottom: 8 }}>
-                          <div className="col-md-4">
-                            <select className="form-control" value={s.platform} onChange={e => {
-                              const val = e.target.value;
-                              setContent((prev: any) => {
-                                const updated = { ...(prev || {}) };
-                                const p = Array.isArray(updated.partners) ? [...updated.partners] : [];
-                                const socials = Array.isArray(p[idx]?.socials) ? [...p[idx].socials] : [];
-                                socials[si] = { ...(socials[si] || {}), platform: val };
-                                p[idx] = { ...(p[idx] || {}), socials };
-                                updated.partners = p;
-                                return updated;
-                              });
-                            }}>
+                      <div className="form-group">
+                        <label>Social Links</label>
+                        {Array.isArray(p.socials) && p.socials.map((s, sIdx) => (
+                          <div key={sIdx} className="input-group mb-2">
+                            <select className="form-select" value={s.platform} onChange={e => handleChange(idx, 'socials', p.socials?.map((soc, i) => i === sIdx ? { ...soc, platform: e.target.value } : soc))}>
                               <option value="instagram">Instagram</option>
                               <option value="facebook">Facebook</option>
                               <option value="tiktok">TikTok</option>
                               <option value="youtube">YouTube</option>
                             </select>
+                            <input type="text" className="form-control" placeholder="URL" value={s.url} onChange={e => handleChange(idx, 'socials', p.socials?.map((soc, i) => i === sIdx ? { ...soc, url: e.target.value } : soc))} />
+                            <button className="btn btn-danger" type="button" onClick={() => handleRemoveSocial(idx, sIdx)}><i className="fas fa-trash"></i></button>
                           </div>
-                          <div className="col-md-6">
-                            <input className="form-control" value={s.url} onChange={e => {
-                              const val = e.target.value;
-                              setContent((prev: any) => {
-                                const updated = { ...(prev || {}) };
-                                const p = Array.isArray(updated.partners) ? [...updated.partners] : [];
-                                const socials = Array.isArray(p[idx]?.socials) ? [...p[idx].socials] : [];
-                                socials[si] = { ...(socials[si] || {}), url: val };
-                                p[idx] = { ...(p[idx] || {}), socials };
-                                updated.partners = p;
-                                return updated;
-                              });
-                            }} />
-                          </div>
-                          <div className="col-md-2">
-                            <button className="btn btn-danger" onClick={() => handleRemoveSocial(idx, si)}>Remove</button>
-                          </div>
-                        </div>
-                      ))}
-                      <div>
-                        <button className="btn btn-secondary" onClick={() => handleAddSocial(idx)}>Add Social</button>
+                        ))}
+                        <button className="btn btn-primary btn-sm" type="button" onClick={() => handleAddSocial(idx)}><i className="fas fa-plus"></i> Add Social</button>
                       </div>
-                    </div>
-                    <div style={{ marginTop: 8 }}>
-                      <label style={{ fontWeight: 'bold' }}>Services (one per line)</label>
-                      <textarea className="form-control" rows={3} value={Array.isArray(partner.services) ? partner.services.join('\n') : ''} onChange={e => {
-                        const lines = e.target.value.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
-                        handleChange(idx, 'services', lines);
-                      }} />
-                    </div>
-                    <div style={{ marginTop: 12 }}>
-                      <button className="btn btn-danger" onClick={() => handleRemove(idx)}>Remove Partner</button>
+                      <button className="btn btn-danger" onClick={() => handleRemove(idx)}><i className="fas fa-trash"></i> Remove Partner</button>
                     </div>
                   </div>
                 ))}
-
-                <div>
-                  <button className="btn btn-primary" onClick={handleSave}>Save Partners</button>
-                  {saved && <span style={{ marginLeft: 12, color: 'green' }}>Saved!</span>}
-                </div>
               </div>
+              <button className="btn btn-success" onClick={handleSave}><i className="fas fa-save"></i> Save Changes</button>
+              {saved && <span className="ml-3 text-success">Saved!</span>}
             </div>
           </section>
         </div>

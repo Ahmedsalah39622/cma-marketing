@@ -53,11 +53,12 @@ export default function AdminProcessSection() {
   const handleAddStep = () => {
     setContent(prev => {
       if (!prev) return prev;
-      const steps = Array.isArray(prev.process.steps) ? [...prev.process.steps] : [];
+      const process = prev.process || { steps: [] };
+      const steps = Array.isArray(process.steps) ? [...process.steps] : [];
       steps.push({ number: String(steps.length + 1).padStart(2, '0'), title: '', description: '', icon: '' });
       return {
         ...prev,
-        process: { ...prev.process, steps },
+        process: { ...process, steps }
       };
     });
   };

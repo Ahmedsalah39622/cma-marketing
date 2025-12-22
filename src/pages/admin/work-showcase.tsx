@@ -55,22 +55,6 @@ export default function AdminWorkShowcase() {
       await saveHomePageContent({ workShowcase: content?.workShowcase });
       setSaved(true);
       setTimeout(() => setSaved(false), 1400);
-    } catch (err) {
-      console.error('Failed to save Work Showcase', err);
-      alert('Failed to save work showcase. Check console for details.');
-    }
-  };
-
-  if (!content) return <div>Loading...</div>;
-
-  return (
-    <>
-      <Head>
-        <title>Edit Work Showcase</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="stylesheet" href="/adminlte/css/adminlte.min.css" />
-        <link rel="stylesheet" href="/adminlte/plugins/fontawesome-free/css/all.min.css" />
-      </Head>
       <div className="wrapper">
         <nav className="main-header navbar navbar-expand navbar-white navbar-light">
           <ul className="navbar-nav">
@@ -97,11 +81,6 @@ export default function AdminWorkShowcase() {
                       <i className="right fas fa-angle-down" style={{ marginLeft: 8 }}></i>
                     </p>
                   </div>
-                  <ul className="nav nav-treeview" style={{ marginLeft: 16, display: 'block' }}>
-                    <li className="nav-item">
-                      <Link href="/admin/work-showcase" className="nav-link active">بعض من أعمالنا</Link>
-                    </li>
-                  </ul>
                 </li>
               </ul>
             </nav>
@@ -109,13 +88,36 @@ export default function AdminWorkShowcase() {
         </aside>
         <div className="content-wrapper">
           <section className="content pt-4">
-            <div className="container-fluid">
-              <div style={{ maxWidth: 900 }}>
-                <h2>بعض من أعمالنا</h2>
-                <div style={{ marginBottom: 12 }}>
-                  <button type="button" className="btn btn-success" onClick={handleAdd}>Add Work</button>
-                </div>
-                {(works || []).map((work, idx) => (
+            <div className="container-fluid" style={{ maxWidth: '1100px', margin: '0 auto', padding: '32px 24px' }}>
+              <h2>Edit Work Showcase</h2>
+              <button className="btn btn-success mb-3" onClick={handleAdd}><i className="fas fa-plus"></i> Add Work</button>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '32px' }}>
+                {works.map((w, idx) => (
+                  <div key={idx} className="card mb-4" style={{ flex: '1 1 340px', minWidth: '320px', maxWidth: '420px' }}>
+                    <div className="card-body">
+                      <div className="form-group">
+                        <label>Client</label>
+                        <input type="text" className="form-control" value={w.client} onChange={e => handleChange(idx, 'client', e.target.value)} />
+                      </div>
+                      <div className="form-group">
+                        <label>Title</label>
+                        <input type="text" className="form-control" value={w.title || ''} onChange={e => handleChange(idx, 'title', e.target.value)} />
+                      </div>
+                      <div className="form-group">
+                        <label>Video URL</label>
+                        <input type="text" className="form-control" value={w.videoUrl} onChange={e => handleChange(idx, 'videoUrl', e.target.value)} />
+                      </div>
+                      <button className="btn btn-danger" onClick={() => handleRemove(idx)}><i className="fas fa-trash"></i> Remove</button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <button className="btn btn-success" onClick={handleSave}><i className="fas fa-save"></i> Save Changes</button>
+              {saved && <span className="ml-3 text-success">Saved!</span>}
+            </div>
+          </section>
+        </div>
+      </div>
                   <div key={idx} style={{ border: '1px solid #eee', borderRadius: 8, padding: 12, marginBottom: 12, background: '#fafbfc' }}>
                     <div className="row">
                       <div className="col-md-4 mb-2">

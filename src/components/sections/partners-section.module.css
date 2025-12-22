@@ -1,3 +1,10 @@
+.cardDesc {
+	color: #374151;
+	font-size: 0.98rem;
+	text-align: center;
+	margin: 8px 0 0 0;
+	line-height: 1.5;
+}
 /* partners-section.module.css - stacked, offset partner cards (ref design) */
 
 .outer {
