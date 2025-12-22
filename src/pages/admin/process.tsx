@@ -1,4 +1,13 @@
 import { useState, useEffect } from 'react';
+import { SearchCode, GitBranch, Code2, TestTube2, Rocket, HeadphonesIcon } from 'lucide-react';
+const iconOptions = [
+  { name: 'SearchCode', icon: SearchCode },
+  { name: 'GitBranch', icon: GitBranch },
+  { name: 'Code2', icon: Code2 },
+  { name: 'TestTube2', icon: TestTube2 },
+  { name: 'Rocket', icon: Rocket },
+  { name: 'HeadphonesIcon', icon: HeadphonesIcon },
+];
 import Head from 'next/head';
 import Link from 'next/link';
 import { getHomePageContent, saveHomePageContent } from '../../lib/content';
@@ -197,13 +206,29 @@ export default function AdminProcessSection() {
                           </div>
                           <div className="col-md-2 mb-2">
                             <label>Icon</label>
-                            <input
+                            <select
                               value={step.icon}
                               onChange={e => handleStepChange(idx, 'icon', e.target.value)}
-                              className="form-control"
-                              type="text"
-                              placeholder="e.g. Rocket"
-                            />
+                              className="form-control mb-1"
+                            >
+                              <option value="">Select icon…</option>
+                              {iconOptions.map(opt => (
+                                <option key={opt.name} value={opt.name}>{opt.name}</option>
+                              ))}
+                            </select>
+                            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 4 }}>
+                              {iconOptions.map(opt => (
+                                <button
+                                  key={opt.name}
+                                  type="button"
+                                  style={{ border: step.icon === opt.name ? '2px solid #0ea5a8' : '1px solid #ccc', borderRadius: 6, background: '#fff', padding: 2, cursor: 'pointer' }}
+                                  title={opt.name}
+                                  onClick={() => handleStepChange(idx, 'icon', opt.name)}
+                                >
+                                  <opt.icon size={22} style={{ color: step.icon === opt.name ? '#0ea5a8' : '#222' }} />
+                                </button>
+                              ))}
+                            </div>
                           </div>
                         </div>
                         <button type="button" className="btn btn-danger btn-sm mt-2" onClick={() => handleRemoveStep(idx)}>
