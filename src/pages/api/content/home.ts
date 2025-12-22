@@ -1,32 +1,55 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import fs from 'fs';
+import { NextApiRequest, NextApiResponse } from 'next';
+import fs from 'fs/promises';
 import path from 'path';
 
-const CONTENT_PATH = path.join(process.cwd(), 'content-home.json');
+const DATA_DIR = path.join(process.cwd(), 'data');
+const FILE_PATH = path.join(DATA_DIR, 'home.json');
 
-function getDefaultContent() {
-  return {
-    hero: { title: 'Main Page', subtitle: 'Welcome to the main page!' },
-    about: { heading: 'About Main', description: 'About us content.' },
-    services: { heading: 'Services Main', description: 'Services overview.' },
-    solutions: { heading: 'Solutions Main', description: 'Solutions overview.' },
-    technology: { heading: 'Technology Main', description: 'Technology overview.' },
-    contact: { heading: 'Contact Main', description: 'Contact info.' },
-  };
-}
-
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === 'GET') {
-    if (!fs.existsSync(CONTENT_PATH)) {
-      fs.writeFileSync(CONTENT_PATH, JSON.stringify(getDefaultContent(), null, 2));
-    }
-    const data = JSON.parse(fs.readFileSync(CONTENT_PATH, 'utf-8'));
-    res.status(200).json(data);
-  } else if (req.method === 'POST') {
-    const data = req.body;
-    fs.writeFileSync(CONTENT_PATH, JSON.stringify(data, null, 2));
-    res.status(200).json({ ok: true });
-  } else {
-    res.status(405).end();
+async function readContent() {
+  try {
+    const txt = await fs.readFile(FILE_PATH, 'utf-8');
+    return JSON.parse(txt);
+  } catch (err: any) {
+    // If file doesn't exist return empty object
+    if (err.code === 'ENOENT') return {};
+    throw err;
   }
 }
+
+async function writeContent(obj: any) {
+  await fs.mkdir(DATA_DIR, { recursive: true });
+  await fs.writeFile(FILE_PATH, JSON.stringify(obj, null, 2), 'utf-8');
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  try {
+    if (req.method === 'GET') {
+      const data = await readContent();
+      return res.status(200).json(data);
+    }
+
+    if (req.method === 'POST') {
+      const incoming = req.body || {};
+      const current = await readContent();
+      // Merge shallowly so admin pages can POST partial section objects
+      const merged = { ...(current || {}), ...(incoming || {}) };
+      await writeContent(merged);
+      return res.status(200).json(merged);
+    }
+
+    res.setHeader('Allow', 'GET,POST');
+    return res.status(405).end('Method Not Allowed');
+  } catch (err: any) {
+    console.error('API /api/content/home error', err);
+    return res.status(500).json({ error: err?.message || String(err) });
+  }
+}
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb', // or higher if needed
+    },
+  },
+};
+

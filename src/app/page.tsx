@@ -17,19 +17,32 @@ const TestimonialsSection = dynamic(() => import('@/components/sections/testimon
 
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
+import styles from './page.module.css';
+
 
 
 
 import PartnersSection from '@/components/sections/partners-section';
-import { partners } from '@/components/sections/partners-data';
 import WorkShowcaseSection from '@/components/sections/work-showcase-section';
-import { works } from '@/components/sections/work-showcase-data';
 
 
+
+
+type HomeContent = {
+  hero?: any;
+  services?: any;
+  process?: any;
+  testimonials?: any;
+  cta?: any;
+  partners?: any;
+  workShowcase?: any;
+  getInTouch?: any;
+  [key: string]: any;
+};
 
 export default function Home() {
   const router = useRouter();
-  const [content, setContent] = useState(null);
+  const [content, setContent] = useState<HomeContent | null>(null);
 
   useEffect(() => {
     getHomePageContent().then(setContent);
@@ -38,8 +51,8 @@ export default function Home() {
   if (!content) return null;
 
   return (
-    <main className="flex flex-col min-h-screen w-screen overflow-x-hidden">
-      <div className="w-full">
+    <main className={styles.mainContainer}>
+      <div className={styles.contentWrapper}>
         <HeroSection content={content.hero} />
         {/* <AnimatedStatsSlider content={content.stats} /> */}
         <ServicesSection content={content.services} />
@@ -47,14 +60,21 @@ export default function Home() {
         <TestimonialsSection content={content.testimonials} />
         <CtaSection content={content.cta} />
 
-        {/* Partners Section */}
-        <PartnersSection partners={partners} />
 
-        {/* Some of Our Work Section */}
-        <WorkShowcaseSection works={works} />
+        {/* Partners Section (dynamic) */}
+        {content.partners && <PartnersSection partners={content.partners} />}
+
+        {/* Some of Our Work Section (dynamic) */}
+        {content.workShowcase && <WorkShowcaseSection works={content.workShowcase} />}
 
         {/* Contact Us Section (modern, with backend integration) */}
-        <ContactPageSection />
+        <ContactPageSection
+          services={content.getInTouch?.services}
+          whatsapp={content.getInTouch?.whatsapp}
+          title={content.getInTouch?.title}
+          description={content.getInTouch?.description}
+          cards={content.getInTouch?.cards}
+        />
       </div>
     </main>
   );

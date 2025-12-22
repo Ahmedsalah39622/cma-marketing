@@ -163,6 +163,15 @@ export default function AdminDashboard() {
                     <li className="nav-item">
                       <Link href="/admin/client-success-stories" className="nav-link">Client Success Stories</Link>
                     </li>
+                    <li className="nav-item">
+                      <Link href="/admin/partners" className="nav-link">Partners Section</Link>
+                    </li>
+                    <li className="nav-item">
+                      <Link href="/admin/work-showcase" className="nav-link">بعض من أعمالنا</Link>
+                    </li>
+                    <li className="nav-item">
+                      <Link href="/admin/get-in-touch" className="nav-link">Get in Touch</Link>
+                    </li>
                   </ul>
                 </li>
               </ul>
