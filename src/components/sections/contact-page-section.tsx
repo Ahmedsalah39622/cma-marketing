@@ -10,20 +10,36 @@ import { useSearchParams } from 'next/navigation';
 
 
 type ContactCard = { icon?: string; title?: string; details?: string[]; description?: string };
+type ContactInfo = ContactCard & { iconName?: string };
+
+type GetInTouch = {
+  services?: string[];
+  whatsapp?: string;
+  title?: string;
+  title_ar?: string;
+  description?: string;
+  description_ar?: string;
+  cards?: ContactCard[];
+};
+
 interface ContactPageSectionProps {
   services?: string[];
   whatsapp?: string;
   title?: string;
   description?: string;
   cards?: ContactCard[];
+  getInTouch?: GetInTouch;
 }
 
 
 import { Phone, Mail, MapPin } from 'lucide-react';
 const ICONS: Record<string, React.ComponentType<{ className?: string }>> = { Phone, Mail, MapPin };
 
-export default function ContactPageSection({ services, whatsapp, title, description, cards }: ContactPageSectionProps) {
+import { useLanguage } from '@/context/LanguageContext';
+
+export default function ContactPageSection({ services, whatsapp, title, description, cards, getInTouch }: ContactPageSectionProps) {
   const formSectionRef = useRef<HTMLDivElement>(null);
+  const { language } = useLanguage();
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
     name: '',
@@ -79,8 +95,13 @@ export default function ContactPageSection({ services, whatsapp, title, descript
     }
   }, [searchParams]);
 
-  const contactInfo = Array.isArray(cards) && cards.length > 0
-    ? cards.map(card => ({
+  // If getInTouch object is provided, prefer its fields (supports title_ar, description_ar, etc.)
+  const effective = getInTouch || { services, whatsapp, title, description, cards };
+  const displayedTitle = language === 'ar' ? (effective.title_ar || effective.title) : effective.title;
+  const displayedDescription = language === 'ar' ? (effective.description_ar || effective.description) : effective.description;
+
+  const contactInfo = Array.isArray(effective.cards) && effective.cards.length > 0
+    ? effective.cards.map((card: ContactCard) => ({
         ...card,
         iconName: card.icon || '',
       }))
@@ -96,16 +117,16 @@ export default function ContactPageSection({ services, whatsapp, title, descript
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-gradient-to-b from-primary/20 via-secondary/10 to-transparent opacity-30 blur-3xl" />
         <div className="container mx-auto px-4 relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">{title || 'Get in Touch'}</h1>
-            <p className="text-lg md:text-xl text-gray-300 mb-8">{description || `Have a project in mind? Let's discuss how we can help bring your ideas to life.`}</p>
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">{displayedTitle || 'Get in Touch'}</h1>
+            <p className="text-lg md:text-xl text-gray-300 mb-8">{displayedDescription || `Have a project in mind? Let's discuss how we can help bring your ideas to life.`}</p>
           </motion.div>
         </div>
       </section>
       <section className="relative px-4 mb-20">
         <div className="container mx-auto max-w-7xl">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {contactInfo.map((info, index) => {
-              const Icon = ICONS[info.iconName] || Phone;
+            {contactInfo.map((info: ContactInfo, index: number) => {
+              const Icon = ICONS[info.iconName || ''] || Phone;
               return (
                 <motion.div key={info.title + index} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 }} whileHover={{ scale: 1.02 }} className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
                   <div className="flex items-center gap-4 mb-4">
@@ -114,7 +135,7 @@ export default function ContactPageSection({ services, whatsapp, title, descript
                     </div>
                     <h3 className="text-xl font-semibold">{info.title}</h3>
                   </div>
-                  {(info.details || []).map((detail, i) => (<p key={i} className="text-gray-300 mb-1">{detail}</p>))}
+                  {(info.details || []).map((detail: string, i: number) => (<p key={i} className="text-gray-300 mb-1">{detail}</p>))}
                   <p className="text-gray-400 text-sm mt-2">{info.description}</p>
                 </motion.div>
               );
@@ -151,7 +172,7 @@ export default function ContactPageSection({ services, whatsapp, title, descript
                     <label htmlFor="serviceType" className="block text-sm font-medium text-gray-300 mb-2">Service Type (optional)</label>
                     <select id="serviceType" name="serviceType" value={formData.serviceType} onChange={handleChange} className="w-full px-4 py-3 bg-white/10 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-primary/50 appearance-none cursor-pointer">
                       <option value="" style={{ backgroundColor: '#1f2937', color: '#9ca3af' }}>-- Select a service --</option>
-                      {(services || [
+                      {(effective.services || [
                         'Web Development',
                         'Cloud Migration',
                         'Consulting',
@@ -187,7 +208,7 @@ export default function ContactPageSection({ services, whatsapp, title, descript
                 </div>
                 <h3 className="text-2xl font-semibold text-white mb-3">Quick Chat on WhatsApp</h3>
                 <p className="text-gray-300 mb-6 text-sm">Get instant responses from our team. Available 24/7 for your inquiries.</p>
-                <a href={`https://wa.me/${whatsapp || '201113146750'}?text=مرحبا، أود الاستفسار عن خدماتكم`} target="_blank" rel="noopener noreferrer" className="w-full px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2">
+                <a href={`https://wa.me/${effective.whatsapp || '201113146750'}?text=مرحبا، أود الاستفسار عن خدماتكم`} target="_blank" rel="noopener noreferrer" className="w-full px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.272-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004a9.87 9.87 0 00-4.781 1.159l-.336-.168c-1.126-.561-1.335-1.623-.715-2.524.61-.9 1.638-1.512 2.568-1.41.93.101 5.228 1.247 5.228 1.247s-1.096-3.215-.549-4.573c.547-1.359 2.517-.369 2.978 1.129.46 1.498-.528 4.209-1.915 5.352-1.387 1.143-3.095 1.779-4.788 1.114a9.87 9.87 0 01-.215-.112z" /></svg>
                   Start WhatsApp Chat
                 </a>

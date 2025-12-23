@@ -41,7 +41,7 @@ export default function AdminPartners() {
   const handleAdd = () => {
     setContent((prev: any) => ({
       ...(prev || {}),
-      partners: [...(Array.isArray(prev?.partners) ? prev.partners : []), { name: '', logoUrl: '', socials: [], description: '' }]
+      partners: [...(Array.isArray(prev?.partners) ? prev.partners : []), { name: '', name_ar: '', logoUrl: '', socials: [], description: '', description_ar: '' }]
     }));
   };
 
@@ -154,8 +154,16 @@ export default function AdminPartners() {
                         <input type="text" className="form-control" value={p.name} onChange={e => handleChange(idx, 'name', e.target.value)} />
                       </div>
                       <div className="form-group">
+                        <label>Name (Arabic)</label>
+                        <input type="text" className="form-control" value={(p as any).name_ar || ''} onChange={e => handleChange(idx, 'name_ar', e.target.value)} />
+                      </div>
+                      <div className="form-group">
                         <label>Description</label>
                         <textarea className="form-control" value={p.description || ''} onChange={e => handleChange(idx, 'description', e.target.value)} rows={2} placeholder="Enter partner description" />
+                      </div>
+                      <div className="form-group">
+                        <label>Description (Arabic)</label>
+                        <textarea className="form-control" value={(p as any).description_ar || ''} onChange={e => handleChange(idx, 'description_ar', e.target.value)} rows={2} placeholder="وصف الشريك" />
                       </div>
                       <div className="form-group">
                         <label>Logo</label>

@@ -6,8 +6,10 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { getHomePageContent } from '@/lib/content';
 import Head from 'next/head';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function SuperFooter() {
+  const { language } = useLanguage();
   const [content, setContent] = useState<any>(null);
   useEffect(() => {
     let mounted = true;
@@ -44,8 +46,8 @@ export default function SuperFooter() {
   };
 
   // fallbacks and compatibility mapping for structured admin content
-  const company = content?.companyName || 'Novix';
-  const description = content?.description || 'Transforming businesses through innovative technology solutions. Your trusted partner in digital evolution.';
+  const company = language === 'ar' ? (content?.companyName_ar || content?.companyName) : (content?.companyName || 'Novix');
+  const description = language === 'ar' ? (content?.description_ar || content?.description) : (content?.description || 'Transforming businesses through innovative technology solutions. Your trusted partner in digital evolution.');
 
   // socials: accept legacy `socials` (array of {label, href}) or new `socialsStructured` (name, icon, link)
   const socialsRaw = content?.socialsStructured ?? content?.socials;
@@ -64,7 +66,7 @@ export default function SuperFooter() {
 
   // quickLinks: accept new shape {name,path} or old {text,href}
   const quickLinksRaw = content?.quickLinks;
-  const quickLinks = Array.isArray(quickLinksRaw) ? quickLinksRaw.map((q: any) => ({ text: q?.text || q?.name || q?.label || '', href: q?.href || q?.path || q?.to || '/' })) : [
+  const quickLinks = Array.isArray(quickLinksRaw) ? quickLinksRaw.map((q: any) => ({ text: language === 'ar' ? (q?.text_ar || q?.name_ar || q?.label_ar) || (q?.text || q?.name || q?.label || '') : (q?.text || q?.name || q?.label || ''), href: q?.href || q?.path || q?.to || '/' })) : [
     { text: 'About Us', href: '/about' },
     { text: 'Services', href: '/services' },
     { text: 'Testimonials', href: '/testimonials' },
@@ -86,9 +88,9 @@ export default function SuperFooter() {
     // prefer first phone if phones array exists, else try legacy phone field
     phone: Array.isArray(contactRaw?.phones) ? (contactRaw.phones[0] || '') : (contactRaw?.phone || ''),
     // address may be stored in footer.address or contact.location/address
-    address: contactRaw?.location || contactRaw?.address || content?.address || 'Helmiet El-Zaitoun, Cairo, Egypt',
+    address: language === 'ar' ? (contactRaw?.location_ar || contactRaw?.address_ar || contactRaw?.location || contactRaw?.address || content?.address || 'Helmiet El-Zaitoun, Cairo, Egypt') : (contactRaw?.location || contactRaw?.address || content?.address || 'Helmiet El-Zaitoun, Cairo, Egypt'),
   };
-  const copyright = content?.copyright || `© ${new Date().getFullYear()} ${company}. All rights reserved.`;
+  const copyright = language === 'ar' ? (content?.copyright_ar || content?.copyright || `© ${new Date().getFullYear()} ${company}. All rights reserved.`) : (content?.copyright || `© ${new Date().getFullYear()} ${company}. All rights reserved.`);
 
   // minimal animated background (kept light)
   const bgShapes = Array.from({ length: 6 }, (_, i) => ({
@@ -146,7 +148,7 @@ export default function SuperFooter() {
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
-            <h3 className="text-xl font-semibold mb-6">Quick Links</h3>
+            <h3 className="text-xl font-semibold mb-6">{language === 'ar' ? 'روابط سريعة' : 'Quick Links'}</h3>
             <ul className="space-y-3">
               {quickLinks.map((ql: any, index: number) => (
                 <motion.li key={ql.text || index} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.06 + 0.1 }}>
@@ -160,19 +162,22 @@ export default function SuperFooter() {
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
-            <h3 className="text-xl font-semibold mb-6">Our Services</h3>
+            <h3 className="text-xl font-semibold mb-6">{language === 'ar' ? 'خدماتنا' : 'Our Services'}</h3>
             <ul className="space-y-3">
-              {services.map((service: any, index: number) => (
-                <motion.li key={service} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.06 + 0.1 }} className="text-gray-300 flex items-center">
-                  <span className="mr-2 text-primary">•</span>
-                  {service}
-                </motion.li>
-              ))}
+              {services.map((service: any, index: number) => {
+                const serviceText = typeof service === 'string' ? service : (language === 'ar' ? (service?.name_ar || service?.name) : (service?.name || service?.name_en || JSON.stringify(service)));
+                return (
+                  <motion.li key={String(serviceText) + index} initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.06 + 0.1 }} className="text-gray-300 flex items-center">
+                    <span className="mr-2 text-primary">•</span>
+                    {serviceText}
+                  </motion.li>
+                );
+              })}
             </ul>
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.6 }} className="space-y-4">
-            <h3 className="text-xl font-semibold mb-6">Contact Us</h3>
+            <h3 className="text-xl font-semibold mb-6">{language === 'ar' ? 'اتصل بنا' : 'Contact Us'}</h3>
             <motion.div whileHover={{ scale: 1.03 }} className="flex items-center text-gray-300">
               <Mail className="mr-3" size={18} />
               <a href={`mailto:${contact.email}`}>{contact.email}</a>
@@ -188,11 +193,11 @@ export default function SuperFooter() {
           </motion.div>
         </div>
 
-        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.8 }} className="mt-12 pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center">
+          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.8 }} className="mt-12 pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 text-sm">{copyright}</p>
           <motion.button onClick={scrollToTop} whileHover={{ scale: 1.05, y: -4 }} whileTap={{ scale: 0.95 }} className="mt-4 md:mt-0 text-white/80 hover:text-white transition-colors flex items-center" aria-label="Back to top" title="Back to top">
             <ArrowUpCircle className="mr-2" size={20} />
-            Back to top
+            {language === 'ar' ? 'العودة للأعلى' : 'Back to top'}
           </motion.button>
         </motion.div>
       </div>

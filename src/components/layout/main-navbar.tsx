@@ -4,6 +4,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useLanguage } from '@/context/LanguageContext';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -21,6 +22,7 @@ const defaultNavLinks = [
 
 
 export default function MainNavbar() {
+  const { language, setLanguage } = useLanguage();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -43,12 +45,12 @@ export default function MainNavbar() {
         const nav = data.navbar || data.mainNavbar || data['main-navbar'] || null;
         if (nav) {
           if (Array.isArray(nav.links)) {
-            setNavLinks(nav.links.map((l: any) => ({ title: l.text || l.title || String(l), href: l.href || ('/' + (l.text || l.title || '').toString().toLowerCase().replace(/\s+/g, '-')) })));
+              setNavLinks(nav.links.map((l: any) => ({ title: l.text || l.title || String(l), title_ar: l.text_ar || l.title_ar || undefined, href: l.href || ('/' + (l.text || l.title || '').toString().toLowerCase().replace(/\s+/g, '-')) })));
           } else if (typeof nav.links === 'string') {
             const parts = nav.links.split(',').map((s: string) => s.trim()).filter(Boolean);
             setNavLinks(parts.map((t: string) => ({ title: t, href: '/' + t.toLowerCase().replace(/\s+/g, '-') })));
           }
-          if (nav.brandText) setBrandText(nav.brandText);
+          if (nav.brandText) setBrandText(language === 'ar' ? (nav.brandText_ar || nav.brandText) : nav.brandText);
         }
       } catch (e) {
         // ignore
@@ -163,11 +165,11 @@ export default function MainNavbar() {
               >
                 <Link
                   href={link.href}
-                                  className="block text-center text-sm py-2.5 px-4 rounded-lg bg-white/5 hover:bg-white/10 active:bg-white/15 transition-colors text-white/90 hover:text-white font-medium backdrop-blur-sm"
+                  className="block text-center text-sm py-2.5 px-4 rounded-lg bg-white/5 hover:bg-white/10 active:bg-white/15 transition-colors text-white/90 hover:text-white font-medium backdrop-blur-sm"
                   onClick={() => setIsMenuOpen(false)}
                   title={link.title}
                 >
-                  {link.title}
+                  {language === 'ar' ? (link.title_ar || link.title) : link.title}
                 </Link>
               </motion.div>
             ))}
@@ -188,7 +190,6 @@ export default function MainNavbar() {
               </motion.div>
             </Link>
           </motion.div>
-
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center md:space-x-1 lg:space-x-2">
             {navLinks.map((link) => (
@@ -203,7 +204,7 @@ export default function MainNavbar() {
                   className="px-3 md:px-4 py-2 text-sm lg:text-base transition-colors rounded-md text-white/90 hover:text-white font-medium"
                   title={link.title}
                 >
-                  {link.title}
+                  {language === 'ar' ? (link.title_ar || link.title) : link.title}
                   <span className="absolute -bottom-1 left-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-1/2 group-hover:left-1/4" />
                 </Link>
               </motion.div>
@@ -224,6 +225,19 @@ export default function MainNavbar() {
                 </Button>
               </motion.div>
             </Link>
+            {/* Language Switcher */}
+            <div className="ml-4 flex items-center space-x-2">
+              <button
+                className={`px-2 py-1 rounded ${language === 'en' ? 'bg-primary text-white' : 'bg-white/10 text-white/80'}`}
+                onClick={() => setLanguage('en')}
+                aria-label="Switch to English"
+              >EN</button>
+              <button
+                className={`px-2 py-1 rounded ${language === 'ar' ? 'bg-primary text-white' : 'bg-white/10 text-white/80'}`}
+                onClick={() => setLanguage('ar')}
+                aria-label="Switch to Arabic"
+              >العربية</button>
+            </div>
           </div>
         </nav>
       </div>

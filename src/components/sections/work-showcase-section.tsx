@@ -2,6 +2,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/context/LanguageContext';
 
 export type WorkVideo = {
   client: string;
@@ -15,6 +16,7 @@ export interface WorkShowcaseSectionProps {
 }
 
 export default function WorkShowcaseSection({ works }: WorkShowcaseSectionProps) {
+  const { language } = useLanguage();
   // Group by client
   const grouped = works.reduce<Record<string, WorkVideo[]>>((acc, w) => {
     acc[w.client] = acc[w.client] || [];
@@ -23,9 +25,9 @@ export default function WorkShowcaseSection({ works }: WorkShowcaseSectionProps)
   }, {});
 
   return (
-    <section className="py-16 px-4 bg--50">
+    <section dir={language === 'ar' ? 'rtl' : 'ltr'} className="py-16 px-4 bg--50">
       <div className="container mx-auto max-w-5xl">
-        <h2 className="text-3xl font-bold mb-8 text-center">بعض من أعمالنا</h2>
+        <h2 className="text-3xl font-bold mb-8 text-center">{language === 'ar' ? 'بعض من أعمالنا' : 'Our Work'}</h2>
         <div className="space-y-10">
           {Object.entries(grouped).map(([client, videos], i) => (
             <div key={client}>
@@ -49,7 +51,7 @@ export default function WorkShowcaseSection({ works }: WorkShowcaseSectionProps)
                         className="w-full h-48 rounded"
                       />
                     </div>
-                    <div className="font-semibold text-center">{v.title || v.videoUrl}</div>
+                    <div className="font-semibold text-center">{language === 'ar' ? ((v as any).title_ar || v.title) : (v.title || v.videoUrl)}</div>
                   </motion.div>
                 ))}
               </div>

@@ -4,6 +4,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import { Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from 'react';
+import { useLanguage } from '@/context/LanguageContext';
 
 const testimonials = [
 	{
@@ -39,6 +40,7 @@ const testimonials = [
 ];
 
 export default function TestimonialsSection() {
+	const { language } = useLanguage();
 	// Helper to compute initials from a full name
 	const getInitials = (name: string) => {
 		if (!name) return '';
@@ -163,7 +165,7 @@ export default function TestimonialsSection() {
 									initial={{ opacity: 0, y: 20 }}
 									animate={{ opacity: index === activeIndex ? 1 : 0, y: 0 }}
 									transition={{ duration: 0.5 }}
-									className="w-full flex-shrink-0 px-4"
+									className={`w-full flex-shrink-0 px-4 ${language === 'ar' ? 'text-right' : ''}`}
 								>
 									<div className="bg-white/5 sm:backdrop-blur-sm p-6 md:p-8 rounded-2xl border border-white/10">
 										<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-6">
@@ -173,8 +175,8 @@ export default function TestimonialsSection() {
 													  <Avatar name={testimonial.name} />
 													</div>
 												<div>
-													<h3 className="text-lg md:text-xl font-semibold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">{testimonial.name}</h3>
-													<p className="text-sm md:text-base text-gray-300">{testimonial.role}</p>
+													<h3 className="text-lg md:text-xl font-semibold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">{language === 'ar' ? (testimonial.name_ar || testimonial.name) : testimonial.name}</h3>
+													<p className="text-sm md:text-base text-gray-300">{language === 'ar' ? (testimonial.role_ar || testimonial.role) : testimonial.role}</p>
 												</div>
 											</div>
 											<div className="flex space-x-1">
@@ -187,8 +189,8 @@ export default function TestimonialsSection() {
 											</div>
 										</div>
 										<blockquote className="text-base md:text-lg text-gray-300 italic leading-relaxed break-words whitespace-pre-line">
-  &ldquo;{testimonial.quote}&rdquo;
-</blockquote>
+											&ldquo;{language === 'ar' ? (testimonial.quote_ar || testimonial.quote) : testimonial.quote}&rdquo;
+										</blockquote>
 									</div>
 								</motion.div>
 							))}

@@ -2,6 +2,7 @@
 'use client';
 
 import React from 'react';
+import { useLanguage } from '@/context/LanguageContext';
 import { motion } from 'framer-motion';
 import styles from './partners-section.module.css';
 
@@ -21,6 +22,7 @@ export type Partner = {
 };
 
 export default function PartnersSection({ partners }: { partners?: Partner[] }) {
+  const { language } = useLanguage();
   const list = (partners && partners.length > 0) ? partners : [
     { id: 'a', name: 'Custom Software Development', company: 'Custom Software Development', title: 'Tailored solutions built from the ground up to meet your specific business needs.', logoUrl: '/img/placeholder.png', cta: 'Learn more', saved: false, color: '#0ea5a4', services: ['Enterprise Software Solutions','Mobile App Development','Web Applications','Integration Services'] },
     { id: 'b', name: 'Cloud Solutions', company: 'Cloud Solutions', title: 'Scalable and secure cloud infrastructure designed for modern businesses.', logoUrl: '/img/placeholder.png', cta: 'Learn more', saved: false, color: '#7c3aed', services: ['Cloud Migration','Cloud-Native Development','Serverless Architecture','Multi-Cloud Strategy'] },
@@ -29,11 +31,11 @@ export default function PartnersSection({ partners }: { partners?: Partner[] }) 
   ];
 
   return (
-    <section className={styles.outer} aria-labelledby="partners-heading">
+    <section dir={language === 'ar' ? 'rtl' : 'ltr'} className={styles.outer} aria-labelledby="partners-heading">
       <div className={styles.background} />
 
       <div className={styles.wrap}>
-        <h2 id="partners-heading" className={styles.heading}>شركاؤنا</h2>
+        <h2 id="partners-heading" className={styles.heading}>{language === 'ar' ? 'شركاؤنا' : 'Our Partners'}</h2>
 
         <div className={styles.gridCards}>
           {list.map((p, i) => (
@@ -58,9 +60,9 @@ export default function PartnersSection({ partners }: { partners?: Partner[] }) 
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="4" stroke="currentColor" strokeWidth="1.4"/></svg>
                   )}
                 </div>
-                <div className={styles.cardTitle}>{p.name}</div>
-                {p.description && (
-                  <div className={styles.cardDesc}>{p.description}</div>
+                <div className={styles.cardTitle}>{language === 'ar' ? ((p as any).name_ar || p.name) : p.name}</div>
+                {((p as any).description_ar || p.description) && (
+                  <div className={styles.cardDesc}>{language === 'ar' ? ((p as any).description_ar || p.description) : p.description}</div>
                 )}
                 <div className={styles.socialRow}>
                   {Array.isArray(p.socials) && p.socials.map((s: any) => (

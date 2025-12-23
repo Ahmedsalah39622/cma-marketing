@@ -10,10 +10,12 @@ import logoImg from '../../../Gemini_Generated_Image_qt0ozxqt0ozxqt0o-removebg-p
 
 import { useEffect, useState } from 'react';
 import { getHomePageContent } from '@/lib/content';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function HeroSection() {
   const [hero, setHero] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const { language } = useLanguage();
 
   useEffect(() => {
     getHomePageContent().then(data => {
@@ -24,14 +26,16 @@ export default function HeroSection() {
 
   if (loading) return <div className="text-center py-12">Loading hero section...</div>;
 
-  const title = hero.title || 'Grow Your Brand with';
-  const subtitle = hero.subtitle || 'We craft data-driven marketing strategies that elevate brands, increase engagement, and drive measurable growth across digital channels — from creative campaigns to analytics-led optimization.';
-  const getStartedLabel = hero.getStartedLabel || 'Get Started';
-  const getStartedTitle = hero.getStartedTitle || 'Get Started';
-  const learnMoreLabel = hero.learnMoreLabel || 'Learn More';
-  const learnMoreTitle = hero.learnMoreTitle || 'Learn More';
-  const scrollLabel = hero.scrollLabel || 'Scroll to next section';
-  const scrollTitle = hero.scrollTitle || 'Scroll to next section';
+  const title = (language === 'ar' ? (hero.title_ar || hero.title) : hero.title) || 'Grow Your Brand with';
+  const subtitle = (language === 'ar' ? (hero.subtitle_ar || hero.subtitle) : hero.subtitle) || 'We craft data-driven marketing strategies that elevate brands, increase engagement, and drive measurable growth across digital channels — from creative campaigns to analytics-led optimization.';
+  const getStartedLabel = (language === 'ar' ? (hero.getStartedLabel_ar || hero.getStartedLabel) : hero.getStartedLabel) || 'Get Started';
+  const getStartedTitle = (language === 'ar' ? (hero.getStartedTitle_ar || hero.getStartedTitle) : hero.getStartedTitle) || 'Get Started';
+  const learnMoreLabel = (language === 'ar' ? (hero.learnMoreLabel_ar || hero.learnMoreLabel) : hero.learnMoreLabel) || 'Learn More';
+  const learnMoreTitle = (language === 'ar' ? (hero.learnMoreTitle_ar || hero.learnMoreTitle) : hero.learnMoreTitle) || 'Learn More';
+  const scrollLabel = (language === 'ar' ? (hero.scrollLabel_ar || hero.scrollLabel) : hero.scrollLabel) || 'Scroll to next section';
+  const scrollTitle = (language === 'ar' ? (hero.scrollTitle_ar || hero.scrollTitle) : hero.scrollTitle) || 'Scroll to next section';
+  const textAlignClass = language === 'ar' ? 'text-right md:text-right' : 'text-center md:text-left';
+  const contentMarginClass = language === 'ar' ? 'mx-auto md:mx-0' : 'mx-auto md:mx-0';
   return (
     <section className="relative min-h-[100svh] flex items-center justify-center bg- pt-16 pb-8 md:py-0">
       <div className="container mx-auto px-4 sm:px-6">
@@ -40,12 +44,13 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-center md:text-left space-y-4 md:space-y-6"
+            dir={language === 'ar' ? 'rtl' : 'ltr'}
+            className={`${textAlignClass} space-y-4 md:space-y-6`}
           >
             <h1 className="text-4xl md:text-6xl font-bold leading-[1.2] tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
               {title} <span className="text-primary"></span>
             </h1>
-            <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto md:mx-0 leading-relaxed">
+            <p className={`text-lg md:text-xl text-gray-300 max-w-2xl ${contentMarginClass} leading-relaxed`}>
               {subtitle}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">

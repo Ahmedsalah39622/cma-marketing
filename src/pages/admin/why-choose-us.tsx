@@ -22,7 +22,7 @@ export default function AdminWhyChooseUs() {
   };
 
   const addFeature = () => {
-    setFeatures(prev => [...prev, { icon: '', title: '', description: '', color: '' }]);
+    setFeatures(prev => [...prev, { icon: '', title: '', title_ar: '', description: '', description_ar: '', color: '' }]);
   };
 
   const removeFeature = (index) => {
@@ -44,7 +44,9 @@ export default function AdminWhyChooseUs() {
         <div key={i} className="mb-4 p-4 border rounded bg-white/5">
           <input value={f.icon} onChange={e => updateFeature(i, 'icon', e.target.value)} placeholder="Icon (e.g. Server)" className="form-control mb-2" />
           <input value={f.title} onChange={e => updateFeature(i, 'title', e.target.value)} placeholder="Title" className="form-control mb-2" />
+          <input value={(f as any).title_ar || ''} onChange={e => updateFeature(i, 'title_ar', e.target.value)} placeholder="Title (Arabic)" className="form-control mb-2" />
           <input value={f.description} onChange={e => updateFeature(i, 'description', e.target.value)} placeholder="Description" className="form-control mb-2" />
+          <input value={(f as any).description_ar || ''} onChange={e => updateFeature(i, 'description_ar', e.target.value)} placeholder="Description (Arabic)" className="form-control mb-2" />
           <input value={f.color} onChange={e => updateFeature(i, 'color', e.target.value)} placeholder="Color classes" className="form-control mb-2" />
           <button onClick={() => removeFeature(i)} className="btn btn-danger">Remove</button>
         </div>

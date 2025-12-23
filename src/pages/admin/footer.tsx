@@ -130,6 +130,15 @@ export default function AdminFooterSection() {
                     className="form-control"
                     style={{ marginTop: 4 }}
                   />
+                  <div style={{ marginTop: 8 }}>
+                    <label style={{ fontWeight: 'bold' }}>Copyright Text (Arabic)</label>
+                    <input
+                      value={(content.footer as any)?.copyright_ar || ''}
+                      onChange={e => handleChange('copyright_ar', e.target.value)}
+                      className="form-control"
+                      style={{ marginTop: 4 }}
+                    />
+                  </div>
                 </div>
                 <div style={{ marginBottom: 16 }}>
                   <label style={{ fontWeight: 'bold' }}>Company Name</label>
@@ -139,6 +148,15 @@ export default function AdminFooterSection() {
                     className="form-control"
                     style={{ marginTop: 4 }}
                   />
+                  <div style={{ marginTop: 8 }}>
+                    <label style={{ fontWeight: 'bold' }}>Company Name (Arabic)</label>
+                    <input
+                      value={(content.footer as any)?.companyName_ar || ''}
+                      onChange={e => handleChange('companyName_ar', e.target.value)}
+                      className="form-control"
+                      style={{ marginTop: 4 }}
+                    />
+                  </div>
                 </div>
                 <div style={{ marginBottom: 16 }}>
                   <label style={{ fontWeight: 'bold' }}>Short Description</label>
@@ -149,6 +167,16 @@ export default function AdminFooterSection() {
                     style={{ marginTop: 4 }}
                     rows={3}
                   />
+                  <div style={{ marginTop: 8 }}>
+                    <label style={{ fontWeight: 'bold' }}>Short Description (Arabic)</label>
+                    <textarea
+                      value={(content.footer as any)?.description_ar || ''}
+                      onChange={e => handleChange('description_ar', e.target.value)}
+                      className="form-control"
+                      style={{ marginTop: 4 }}
+                      rows={3}
+                    />
+                  </div>
                 </div>
                 <div style={{ marginBottom: 16 }}>
                   <label style={{ fontWeight: 'bold' }}>Address</label>
@@ -158,6 +186,15 @@ export default function AdminFooterSection() {
                     className="form-control"
                     style={{ marginTop: 4 }}
                   />
+                  <div style={{ marginTop: 8 }}>
+                    <label style={{ fontWeight: 'bold' }}>Address (Arabic)</label>
+                    <input
+                      value={(content.footer as any)?.address_ar || ''}
+                      onChange={e => handleChange('address_ar', e.target.value)}
+                      className="form-control"
+                      style={{ marginTop: 4 }}
+                    />
+                  </div>
                 </div>
                 <div style={{ marginBottom: 24 }}>
                   <h4>Quick Links</h4>
@@ -169,6 +206,17 @@ export default function AdminFooterSection() {
                         onChange={e => updateFooter(f => {
                           const arr = Array.isArray(f.quickLinks) ? [...f.quickLinks] : [];
                           arr[idx] = { ...(arr[idx] || {}), name: e.target.value };
+                          return { ...f, quickLinks: arr };
+                        })}
+                        className="form-control mr-2"
+                        style={{ marginRight: 8 }}
+                      />
+                      <input
+                        placeholder="Link name (Arabic)"
+                        value={(ql as any).name_ar || ''}
+                        onChange={e => updateFooter(f => {
+                          const arr = Array.isArray(f.quickLinks) ? [...f.quickLinks] : [];
+                          arr[idx] = { ...(arr[idx] || {}), name_ar: e.target.value };
                           return { ...f, quickLinks: arr };
                         })}
                         className="form-control mr-2"
@@ -194,7 +242,7 @@ export default function AdminFooterSection() {
                   ))}
                   <button className="btn btn-secondary" type="button" onClick={() => updateFooter(f => ({
                     ...f,
-                    quickLinks: [ ...(Array.isArray(f.quickLinks) ? f.quickLinks : []), { name: '', path: '' } ],
+                    quickLinks: [ ...(Array.isArray(f.quickLinks) ? f.quickLinks : []), { name: '', name_ar: '', path: '' } ],
                   }))}>Add Quick Link</button>
                 </div>
 
@@ -213,16 +261,30 @@ export default function AdminFooterSection() {
                         className="form-control mr-2"
                         style={{ marginRight: 8 }}
                       />
+                      <input
+                        placeholder="Service name (Arabic)"
+                        value={Array.isArray((content.footer as any).services_ar) ? ((content.footer as any).services_ar[idx] || '') : ''}
+                        onChange={e => updateFooter(f => {
+                          const arrAr = Array.isArray((f as any).services_ar) ? [...(f as any).services_ar] : [];
+                          arrAr[idx] = e.target.value;
+                          return { ...f, services_ar: arrAr };
+                        })}
+                        className="form-control mr-2"
+                        style={{ marginRight: 8 }}
+                      />
                       <button className="btn btn-danger" type="button" onClick={() => updateFooter(f => {
                         const arr = Array.isArray(f.services) ? [...f.services] : [];
                         arr.splice(idx, 1);
-                        return { ...f, services: arr };
+                        const arrAr = Array.isArray((f as any).services_ar) ? [...(f as any).services_ar] : [];
+                        arrAr.splice(idx, 1);
+                        return { ...f, services: arr, services_ar: arrAr };
                       })}>Remove</button>
                     </div>
                   ))}
                   <button className="btn btn-secondary" type="button" onClick={() => updateFooter(f => ({
                     ...f,
                     services: [ ...(Array.isArray(f.services) ? f.services : []), '' ],
+                    services_ar: [ ...(Array.isArray((f as any).services_ar) ? (f as any).services_ar : []), '' ],
                   }))}>Add Service</button>
                 </div>
 

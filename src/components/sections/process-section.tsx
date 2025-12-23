@@ -3,6 +3,7 @@
 
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import { useLanguage } from '@/context/LanguageContext';
 import { getHomePageContent } from '@/lib/content';
 import { SearchCode, GitBranch, Code2, TestTube2, Rocket, HeadphonesIcon } from 'lucide-react';
 
@@ -20,11 +21,17 @@ export default function ProcessSection() {
   const [steps, setSteps] = useState<any[]>([]);
   const [heading, setHeading] = useState('Our Process');
   const [loading, setLoading] = useState(true);
+  const [headingAr, setHeadingAr] = useState<string | undefined>(undefined);
+  const { language } = useLanguage();
 
   useEffect(() => {
     getHomePageContent().then(data => {
-      setSteps(data.process?.steps || []);
-      setHeading(data.process?.heading || 'Our Process');
+      // Support both shapes: data.process may be an array (new),
+      // or an object with a `steps` array (old).
+      const stepsArray = Array.isArray(data.process) ? data.process : (data.process?.steps || []);
+      setSteps(stepsArray);
+      setHeading((data.process && data.process.heading) || data.process_heading || 'Our Process');
+      setHeadingAr((data.process && data.process.heading_ar) || data.process_heading_ar);
       setLoading(false);
     });
   }, []);
@@ -45,7 +52,7 @@ export default function ProcessSection() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">{heading}</h2>
+          <h2 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">{language === 'ar' ? (headingAr || heading) : heading}</h2>
           <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto">
             A systematic approach to delivering exceptional results
           </p>
@@ -72,8 +79,8 @@ export default function ProcessSection() {
                       <Icon className="w-8 h-8 text-white transition-colors" />
                     </div>
                   </div>
-                  <h3 className="text-2xl font-semibold mb-3 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">{step.title}</h3>
-                  <p className="text-gray-300 leading-relaxed break-words whitespace-pre-line">{step.description}</p>
+                  <h3 className="text-2xl font-semibold mb-3 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">{language === 'ar' ? (step.title_ar || step.title) : step.title}</h3>
+                  <p className="text-gray-300 leading-relaxed break-words whitespace-pre-line">{language === 'ar' ? (step.description_ar || step.description) : step.description}</p>
                 </div>
               </motion.div>
             );

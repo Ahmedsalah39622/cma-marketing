@@ -64,7 +64,7 @@ export default function AdminProcessSection() {
       if (!prev) return prev;
       const process = prev.process || { steps: [] };
       const steps = Array.isArray(process.steps) ? [...process.steps] : [];
-      steps.push({ number: String(steps.length + 1).padStart(2, '0'), title: '', description: '', icon: '' });
+      steps.push({ number: String(steps.length + 1).padStart(2, '0'), title: '', title_ar: '', description: '', description_ar: '', icon: '' });
       return {
         ...prev,
         process: { ...process, steps }
@@ -169,6 +169,15 @@ export default function AdminProcessSection() {
                     className="form-control"
                     style={{ marginTop: 4 }}
                   />
+                  <div style={{ marginTop: 8 }}>
+                    <label style={{ fontWeight: 'bold' }}>Heading (Arabic)</label>
+                    <input
+                      value={(content.process as any)?.heading_ar || ''}
+                      onChange={e => handleChange('heading_ar', e.target.value)}
+                      className="form-control"
+                      style={{ marginTop: 4 }}
+                    />
+                  </div>
                 </div>
 
                 <div style={{ marginBottom: 16 }}>
@@ -186,24 +195,38 @@ export default function AdminProcessSection() {
                               type="text"
                             />
                           </div>
-                          <div className="col-md-3 mb-2">
-                            <label>Title</label>
-                            <input
-                              value={step.title}
-                              onChange={e => handleStepChange(idx, 'title', e.target.value)}
-                              className="form-control"
-                              type="text"
-                            />
-                          </div>
-                          <div className="col-md-5 mb-2">
-                            <label>Description</label>
-                            <input
-                              value={step.description}
-                              onChange={e => handleStepChange(idx, 'description', e.target.value)}
-                              className="form-control"
-                              type="text"
-                            />
-                          </div>
+                              <div className="col-md-3 mb-2">
+                                <label>Title</label>
+                                <input
+                                  value={step.title}
+                                  onChange={e => handleStepChange(idx, 'title', e.target.value)}
+                                  className="form-control"
+                                  type="text"
+                                />
+                                <label style={{ marginTop: 8 }}>Title (Arabic)</label>
+                                <input
+                                  value={(step as any).title_ar || ''}
+                                  onChange={e => handleStepChange(idx, 'title_ar', e.target.value)}
+                                  className="form-control"
+                                  type="text"
+                                />
+                              </div>
+                              <div className="col-md-5 mb-2">
+                                <label>Description</label>
+                                <input
+                                  value={step.description}
+                                  onChange={e => handleStepChange(idx, 'description', e.target.value)}
+                                  className="form-control"
+                                  type="text"
+                                />
+                                <label style={{ marginTop: 8 }}>Description (Arabic)</label>
+                                <input
+                                  value={(step as any).description_ar || ''}
+                                  onChange={e => handleStepChange(idx, 'description_ar', e.target.value)}
+                                  className="form-control"
+                                  type="text"
+                                />
+                              </div>
                           <div className="col-md-2 mb-2">
                             <label>Icon</label>
                             <select

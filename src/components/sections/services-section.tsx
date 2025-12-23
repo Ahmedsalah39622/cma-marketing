@@ -20,6 +20,7 @@ const iconMap = {
 
 
 import { useEffect, useState } from 'react';
+import { useLanguage } from '@/context/LanguageContext';
 import { getHomePageContent } from '@/lib/content';
 
 type Service = {
@@ -32,12 +33,23 @@ type Service = {
 export default function ServicesSection() {
   const [services, setServices] = useState<Service[]>([]);
   const [heading, setHeading] = useState('Our Solutions');
+  const [headingAr, setHeadingAr] = useState<string | undefined>(undefined);
+  const [description, setDescription] = useState<string | undefined>(undefined);
+  const [descriptionAr, setDescriptionAr] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(true);
+  const { language } = useLanguage();
 
   useEffect(() => {
     getHomePageContent().then(data => {
-      setServices(data.services?.services || []);
-      setHeading(data.services?.heading || 'Our Solutions');
+      // Support both shapes: either data.services is an array (new),
+      // or data.services is an object containing a `services` array (old).
+      const svcArray = Array.isArray(data.services) ? data.services : (data.services?.services || []);
+      setServices(svcArray);
+      // Heading/description might live on data.services (object) or as separate keys
+      setHeading((data.services && data.services.heading) || data.services_heading || 'Our Solutions');
+      setHeadingAr((data.services && data.services.heading_ar) || data.services_heading_ar);
+      setDescription((data.services && data.services.description) || data.services_description || undefined);
+      setDescriptionAr((data.services && data.services.description_ar) || data.services_description_ar || undefined);
       setLoading(false);
     });
   }, []);
@@ -56,10 +68,9 @@ export default function ServicesSection() {
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">{heading}</h2>
+          <h2 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">{language === 'ar' ? (headingAr || heading) : heading}</h2>
           <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto">
-            At Novix, we provide advanced technological solutions that drive innovation.
-            From AI integration to cloud infrastructure, we power your digital transformation.
+            {language === 'ar' ? (descriptionAr || description || '...') : (description || 'At Novix, we provide advanced technological solutions that drive innovation. From AI integration to cloud infrastructure, we power your digital transformation.')}
           </p>
         </motion.div>
 
@@ -69,10 +80,14 @@ export default function ServicesSection() {
             if (service.icon && iconMap[service.icon]) {
               Icon = iconMap[service.icon];
             }
+            const localizedTitle = language === 'ar' ? ((service as any).title_ar || service.title) : service.title;
+            const localizedDescription = language === 'ar' ? ((service as any).description_ar || service.description) : service.description;
             return (
               <AnimatedServiceCard
-                key={service.title}
+                key={localizedTitle}
                 {...service}
+                title={localizedTitle}
+                description={localizedDescription}
                 icon={Icon}
                 index={index}
               />

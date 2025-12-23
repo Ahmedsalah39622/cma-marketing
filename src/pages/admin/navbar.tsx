@@ -68,6 +68,15 @@ export default function AdminNavbarSection() {
                     onChange={e => update(c => ({ ...c, navbar: { ...(c.navbar || {}), brandText: e.target.value } }))}
                     style={{ marginTop: 6 }}
                   />
+                  <div style={{ marginTop: 8 }}>
+                    <label style={{ fontWeight: 'bold' }}>Brand Text (Arabic)</label>
+                    <input
+                      className="form-control"
+                      value={nav.brandText_ar || ''}
+                      onChange={e => update(c => ({ ...c, navbar: { ...(c.navbar || {}), brandText_ar: e.target.value } }))}
+                      style={{ marginTop: 6 }}
+                    />
+                  </div>
                 </div>
 
                 <div style={{ marginBottom: 12 }}>
@@ -88,6 +97,15 @@ export default function AdminNavbarSection() {
                     onChange={e => update(c => ({ ...c, navbar: { ...(c.navbar || {}), ctaLabel: e.target.value } }))}
                     style={{ marginTop: 6 }}
                   />
+                  <div style={{ marginTop: 8 }}>
+                    <label style={{ fontWeight: 'bold' }}>Primary CTA Label (Arabic)</label>
+                    <input
+                      className="form-control"
+                      value={nav.ctaLabel_ar || ''}
+                      onChange={e => update(c => ({ ...c, navbar: { ...(c.navbar || {}), ctaLabel_ar: e.target.value } }))}
+                      style={{ marginTop: 6 }}
+                    />
+                  </div>
                 </div>
 
                 <div style={{ marginBottom: 16 }}>
@@ -110,6 +128,12 @@ export default function AdminNavbarSection() {
                         arr[idx] = { ...(arr[idx] || {}), title: e.target.value };
                         return { ...c, navbar: { ...base, links: arr } };
                       })} />
+                      <input value={(l as any).title_ar || ''} placeholder="Title (Arabic)" className="form-control mr-2" style={{ marginRight: 8 }} onChange={e => update(c => {
+                        const base = c.navbar || {};
+                        const arr = Array.isArray(base.links) ? [...base.links] : [];
+                        arr[idx] = { ...(arr[idx] || {}), title_ar: e.target.value };
+                        return { ...c, navbar: { ...base, links: arr } };
+                      })} />
                       <input value={l.href || ''} placeholder="Href (e.g. /about)" className="form-control mr-2" style={{ marginRight: 8 }} onChange={e => update(c => {
                         const base = c.navbar || {};
                         const arr = Array.isArray(base.links) ? [...base.links] : [];
@@ -127,7 +151,7 @@ export default function AdminNavbarSection() {
                   <button className="btn btn-secondary" type="button" onClick={() => update(c => {
                     const base = c.navbar || {};
                     const arr = Array.isArray(base.links) ? [...base.links] : [];
-                    arr.push({ title: '', href: '' });
+                    arr.push({ title: '', title_ar: '', href: '' });
                     return { ...c, navbar: { ...base, links: arr } };
                   })}>Add Link</button>
                 </div>

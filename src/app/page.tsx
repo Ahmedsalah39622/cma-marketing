@@ -53,12 +53,12 @@ export default function Home() {
   return (
     <main className={styles.mainContainer}>
       <div className={styles.contentWrapper}>
-        <HeroSection content={content.hero} />
+        <HeroSection />
         {/* <AnimatedStatsSlider content={content.stats} /> */}
-        <ServicesSection content={content.services} />
-        <ProcessSection content={content.process} />
-        <TestimonialsSection content={content.testimonials} />
-        <CtaSection content={content.cta} />
+        <ServicesSection />
+        <ProcessSection />
+        {/* <TestimonialsSection content={content.testimonials} /> */}
+        <CtaSection />
 
 
         {/* Partners Section (dynamic) */}
@@ -69,11 +69,7 @@ export default function Home() {
 
         {/* Contact Us Section (modern, with backend integration) */}
         <ContactPageSection
-          services={content.getInTouch?.services}
-          whatsapp={content.getInTouch?.whatsapp}
-          title={content.getInTouch?.title}
-          description={content.getInTouch?.description}
-          cards={content.getInTouch?.cards}
+          getInTouch={content.getInTouch}
         />
       </div>
     </main>

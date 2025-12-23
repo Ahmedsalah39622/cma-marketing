@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -34,6 +36,11 @@ body {
   padding: 0;
   overflow-x: hidden;
   position: relative;
+}
+
+/* When page is in RTL (Arabic) prefer an Arabic-capable font as fallback */
+html[dir="rtl"] body {
+  font-family: 'Cairo', var(--font-sans), ui-sans-serif, system, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 /* Improve font rendering on mobile */

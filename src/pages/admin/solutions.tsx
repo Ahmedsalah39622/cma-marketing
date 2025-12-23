@@ -43,7 +43,7 @@ export default function AdminSolutionsSection() {
     setContent((prev) => {
       if (!prev) return prev;
       const arr = Array.isArray(prev.solutions?.solutions) ? [...prev.solutions!.solutions!] : [];
-      arr.push({ title: '', description: '' });
+      arr.push({ title: '', title_ar: '', description: '', description_ar: '' });
       return { ...prev, solutions: { ...prev.solutions, solutions: arr } };
     });
   };
@@ -140,6 +140,15 @@ export default function AdminSolutionsSection() {
                     className="form-control"
                     style={{ marginTop: 4 }}
                   />
+                  <div style={{ marginTop: 8 }}>
+                    <label style={{ fontWeight: 'bold' }}>Heading (Arabic)</label>
+                    <input
+                      value={(content.solutions as any)?.heading_ar || ''}
+                      onChange={e => handleChange('heading_ar', e.target.value)}
+                      className="form-control"
+                      style={{ marginTop: 4 }}
+                    />
+                  </div>
                 </div>
                 <div style={{ marginBottom: 16 }}>
                   <label style={{ fontWeight: 'bold' }}>Description</label>
@@ -150,6 +159,16 @@ export default function AdminSolutionsSection() {
                     rows={3}
                     style={{ marginTop: 4 }}
                   />
+                  <div style={{ marginTop: 8 }}>
+                    <label style={{ fontWeight: 'bold' }}>Description (Arabic)</label>
+                    <textarea
+                      value={(content.solutions as any)?.description_ar || ''}
+                      onChange={e => handleChange('description_ar', e.target.value)}
+                      className="form-control"
+                      rows={3}
+                      style={{ marginTop: 4 }}
+                    />
+                  </div>
                 </div>
                 <div style={{ marginTop: 16, marginBottom: 16 }}>
                   <h4>Solution Items</h4>
@@ -162,10 +181,25 @@ export default function AdminSolutionsSection() {
                         className="form-control"
                         style={{ marginTop: 4 }}
                       />
+                      <label style={{ fontWeight: 'bold', marginTop: 8 }}>Title (Arabic)</label>
+                      <input
+                        value={(item as any).title_ar || ''}
+                        onChange={e => handleItemChange(idx, 'title_ar', e.target.value)}
+                        className="form-control"
+                        style={{ marginTop: 4 }}
+                      />
                       <label style={{ fontWeight: 'bold', marginTop: 8 }}>Description</label>
                       <textarea
                         value={item.description || ''}
                         onChange={e => handleItemChange(idx, 'description', e.target.value)}
+                        className="form-control"
+                        rows={2}
+                        style={{ marginTop: 4 }}
+                      />
+                      <label style={{ fontWeight: 'bold', marginTop: 8 }}>Description (Arabic)</label>
+                      <textarea
+                        value={(item as any).description_ar || ''}
+                        onChange={e => handleItemChange(idx, 'description_ar', e.target.value)}
                         className="form-control"
                         rows={2}
                         style={{ marginTop: 4 }}

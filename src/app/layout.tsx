@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import SuperFooter from '@/components/sections/super-footer';
 import MainNavbar from '@/components/layout/main-navbar';
+import { LanguageProvider } from '@/context/LanguageContext';
 import { ClientAnimations } from '@/components/layout/client-animations';
 import { WhatsAppButton } from '@/components/animations/WhatsAppButton';
 
@@ -48,12 +49,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden`}
       >
-        <ClientAnimations>
-          <MainNavbar />
-          {children}
-          <SuperFooter />
-          <WhatsAppButton />
-        </ClientAnimations>
+        <LanguageProvider>
+          <ClientAnimations>
+            <MainNavbar />
+            {children}
+            <SuperFooter />
+            <WhatsAppButton />
+          </ClientAnimations>
+        </LanguageProvider>
       </body>
     </html>
   );

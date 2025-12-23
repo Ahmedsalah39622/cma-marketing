@@ -6,13 +6,21 @@ import { getHomePageContent, saveHomePageContent } from '../../lib/content';
 type HeroContent = {
   hero: {
     title?: string;
+    title_ar?: string;
     subtitle?: string;
+    subtitle_ar?: string;
     getStartedLabel?: string;
+    getStartedLabel_ar?: string;
     getStartedTitle?: string;
+    getStartedTitle_ar?: string;
     learnMoreLabel?: string;
+    learnMoreLabel_ar?: string;
     learnMoreTitle?: string;
+    learnMoreTitle_ar?: string;
     scrollLabel?: string;
+    scrollLabel_ar?: string;
     scrollTitle?: string;
+    scrollTitle_ar?: string;
   };
 };
 
@@ -102,19 +110,34 @@ export default function AdminHeroSection() {
               <div style={{ maxWidth: 800 }}>
                 <h2>Hero Section</h2>
                 <div style={{ marginBottom: 16 }}>
-                  <label style={{ fontWeight: 'bold' }}>Title</label>
+                  <label style={{ fontWeight: 'bold' }}>Title (EN)</label>
                   <input
                     value={content.hero?.title || ''}
                     onChange={e => handleChange('title', e.target.value)}
                     className="form-control"
                     style={{ marginTop: 4 }}
                   />
+                  <label style={{ fontWeight: 'bold', marginTop: 8 }}>Title (AR)</label>
+                  <input
+                    value={content.hero?.title_ar || ''}
+                    onChange={e => handleChange('title_ar', e.target.value)}
+                    className="form-control"
+                    style={{ marginTop: 4 }}
+                  />
                 </div>
                 <div style={{ marginBottom: 16 }}>
-                  <label style={{ fontWeight: 'bold' }}>Subtitle</label>
+                  <label style={{ fontWeight: 'bold' }}>Subtitle (EN)</label>
                   <textarea
                     value={content.hero?.subtitle || ''}
                     onChange={e => handleChange('subtitle', e.target.value)}
+                    className="form-control"
+                    rows={3}
+                    style={{ marginTop: 4 }}
+                  />
+                  <label style={{ fontWeight: 'bold', marginTop: 8 }}>Subtitle (AR)</label>
+                  <textarea
+                    value={content.hero?.subtitle_ar || ''}
+                    onChange={e => handleChange('subtitle_ar', e.target.value)}
                     className="form-control"
                     rows={3}
                     style={{ marginTop: 4 }}
@@ -123,55 +146,97 @@ export default function AdminHeroSection() {
                 <div style={{ marginTop: 16, marginBottom: 16, background: '#f8f9fa', padding: 16, borderRadius: 8 }}>
                   <h4>Hero Section Button/Label Texts</h4>
                   <div style={{ marginBottom: 12 }}>
-                    <label style={{ fontWeight: 'bold' }}>Get Started Label</label>
+                    <label style={{ fontWeight: 'bold' }}>Get Started Label (EN)</label>
                     <input
                       value={content.hero?.getStartedLabel || ''}
                       onChange={e => handleChange('getStartedLabel', e.target.value)}
                       className="form-control"
                       style={{ marginTop: 4 }}
                     />
+                    <label style={{ fontWeight: 'bold', marginTop: 8 }}>Get Started Label (AR)</label>
+                    <input
+                      value={content.hero?.getStartedLabel_ar || ''}
+                      onChange={e => handleChange('getStartedLabel_ar', e.target.value)}
+                      className="form-control"
+                      style={{ marginTop: 4 }}
+                    />
                   </div>
                   <div style={{ marginBottom: 12 }}>
-                    <label style={{ fontWeight: 'bold' }}>Get Started Title</label>
+                    <label style={{ fontWeight: 'bold' }}>Get Started Title (EN)</label>
                     <input
                       value={content.hero?.getStartedTitle || ''}
                       onChange={e => handleChange('getStartedTitle', e.target.value)}
                       className="form-control"
                       style={{ marginTop: 4 }}
                     />
+                    <label style={{ fontWeight: 'bold', marginTop: 8 }}>Get Started Title (AR)</label>
+                    <input
+                      value={content.hero?.getStartedTitle_ar || ''}
+                      onChange={e => handleChange('getStartedTitle_ar', e.target.value)}
+                      className="form-control"
+                      style={{ marginTop: 4 }}
+                    />
                   </div>
                   <div style={{ marginBottom: 12 }}>
-                    <label style={{ fontWeight: 'bold' }}>Learn More Label</label>
+                    <label style={{ fontWeight: 'bold' }}>Learn More Label (EN)</label>
                     <input
                       value={content.hero?.learnMoreLabel || ''}
                       onChange={e => handleChange('learnMoreLabel', e.target.value)}
                       className="form-control"
                       style={{ marginTop: 4 }}
                     />
+                    <label style={{ fontWeight: 'bold', marginTop: 8 }}>Learn More Label (AR)</label>
+                    <input
+                      value={content.hero?.learnMoreLabel_ar || ''}
+                      onChange={e => handleChange('learnMoreLabel_ar', e.target.value)}
+                      className="form-control"
+                      style={{ marginTop: 4 }}
+                    />
                   </div>
                   <div style={{ marginBottom: 12 }}>
-                    <label style={{ fontWeight: 'bold' }}>Learn More Title</label>
+                    <label style={{ fontWeight: 'bold' }}>Learn More Title (EN)</label>
                     <input
                       value={content.hero?.learnMoreTitle || ''}
                       onChange={e => handleChange('learnMoreTitle', e.target.value)}
                       className="form-control"
                       style={{ marginTop: 4 }}
                     />
+                    <label style={{ fontWeight: 'bold', marginTop: 8 }}>Learn More Title (AR)</label>
+                    <input
+                      value={content.hero?.learnMoreTitle_ar || ''}
+                      onChange={e => handleChange('learnMoreTitle_ar', e.target.value)}
+                      className="form-control"
+                      style={{ marginTop: 4 }}
+                    />
                   </div>
                   <div style={{ marginBottom: 12 }}>
-                    <label style={{ fontWeight: 'bold' }}>Scroll Arrow Label</label>
+                    <label style={{ fontWeight: 'bold' }}>Scroll Arrow Label (EN)</label>
                     <input
                       value={content.hero?.scrollLabel || ''}
                       onChange={e => handleChange('scrollLabel', e.target.value)}
                       className="form-control"
                       style={{ marginTop: 4 }}
                     />
+                    <label style={{ fontWeight: 'bold', marginTop: 8 }}>Scroll Arrow Label (AR)</label>
+                    <input
+                      value={content.hero?.scrollLabel_ar || ''}
+                      onChange={e => handleChange('scrollLabel_ar', e.target.value)}
+                      className="form-control"
+                      style={{ marginTop: 4 }}
+                    />
                   </div>
                   <div style={{ marginBottom: 12 }}>
-                    <label style={{ fontWeight: 'bold' }}>Scroll Arrow Title</label>
+                    <label style={{ fontWeight: 'bold' }}>Scroll Arrow Title (EN)</label>
                     <input
                       value={content.hero?.scrollTitle || ''}
                       onChange={e => handleChange('scrollTitle', e.target.value)}
+                      className="form-control"
+                      style={{ marginTop: 4 }}
+                    />
+                    <label style={{ fontWeight: 'bold', marginTop: 8 }}>Scroll Arrow Title (AR)</label>
+                    <input
+                      value={content.hero?.scrollTitle_ar || ''}
+                      onChange={e => handleChange('scrollTitle_ar', e.target.value)}
                       className="form-control"
                       style={{ marginTop: 4 }}
                     />

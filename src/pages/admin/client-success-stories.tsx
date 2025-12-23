@@ -19,17 +19,17 @@ export default function AdminClientSuccessStoriesSection() {
     fetchContent();
   }, []);
 
-  const updateStory = (index: number, field: keyof Story, value: string) => {
+  const updateStory = (index: number, field: keyof Story | string, value: string) => {
     setContent((prev) => {
       if (!prev) return prev;
       const stories = [...prev.clientSuccessStories];
-      stories[index] = { ...stories[index], [field]: value } as Story;
+      stories[index] = { ...stories[index], [field]: value } as any;
       return { ...prev, clientSuccessStories: stories };
     });
   };
 
   const addStory = () => {
-    setContent((prev) => prev ? { ...prev, clientSuccessStories: [...prev.clientSuccessStories, { name: '', position: '', content: '' }] } : prev);
+    setContent((prev) => prev ? { ...prev, clientSuccessStories: [...prev.clientSuccessStories, { name: '', name_ar: '', position: '', position_ar: '', content: '', content_ar: '' }] } : prev);
   };
 
   const removeStory = (index: number) => {
@@ -121,14 +121,20 @@ export default function AdminClientSuccessStoriesSection() {
                       <div style={{ marginBottom: 8 }}>
                         <label style={{ fontWeight: 'bold' }}>Name</label>
                         <input value={s.name} onChange={e => updateStory(i, 'name', e.target.value)} className="form-control" style={{ marginTop: 4 }} />
+                        <label style={{ fontWeight: 'bold', marginTop: 8 }}>Name (Arabic)</label>
+                        <input value={(s as any).name_ar || ''} onChange={e => updateStory(i, 'name_ar', e.target.value)} className="form-control" style={{ marginTop: 4 }} />
                       </div>
                       <div style={{ marginBottom: 8 }}>
                         <label style={{ fontWeight: 'bold' }}>Position</label>
                         <input value={s.position} onChange={e => updateStory(i, 'position', e.target.value)} className="form-control" style={{ marginTop: 4 }} />
+                        <label style={{ fontWeight: 'bold', marginTop: 8 }}>Position (Arabic)</label>
+                        <input value={(s as any).position_ar || ''} onChange={e => updateStory(i, 'position_ar', e.target.value)} className="form-control" style={{ marginTop: 4 }} />
                       </div>
                       <div style={{ marginBottom: 8 }}>
                         <label style={{ fontWeight: 'bold' }}>Content</label>
                         <textarea value={s.content} onChange={e => updateStory(i, 'content', e.target.value)} rows={3} className="form-control" style={{ marginTop: 4 }} />
+                        <label style={{ fontWeight: 'bold', marginTop: 8 }}>Content (Arabic)</label>
+                        <textarea value={(s as any).content_ar || ''} onChange={e => updateStory(i, 'content_ar', e.target.value)} rows={3} className="form-control" style={{ marginTop: 4 }} />
                       </div>
                       <div style={{ textAlign: 'right' }}>
                         <button className="btn btn-sm btn-danger" onClick={() => removeStory(i)}>Remove</button>
